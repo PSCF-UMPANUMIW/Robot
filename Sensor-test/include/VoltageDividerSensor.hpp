@@ -6,7 +6,7 @@ class VoltageDividerSensor
 {
 public:
     VoltageDividerSensor(uint8_t pin, float r_vcc, float r_gnd)
-        : pin(pin), multiplier((r_vcc + r_gnd) / r_gnd)
+        : VoltageDividerSensor(pin, r_vcc / (r_vcc + r_gnd))
     {}
 
     VoltageDividerSensor(uint8_t pin, float multiplier)
