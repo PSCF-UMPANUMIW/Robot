@@ -1,50 +1,91 @@
 #include <Arduino.h>
-#include <HardwareSerial.h>
 
-#define LIDAR_TX 27
+constexpr byte LIDAR_TX = 27;
 
-static bool acceptsInterrupts = true;
-static byte buffer[1024];
-static int size;
+constexpr byte HEAD_BYTE = 0xFA;
+constexpr int PACKET_SIZE = 22;
+constexpr int DISTANCES_PER_PACKET = 4;
 
-void printBuffer() {
-    Serial.printf("(0x%02x) ", size);
-    for (int i = 0; i < size; i++) {
-        Serial.printf("%02x ", buffer[i]);
+static byte packet[PACKET_SIZE] = {};
+static uint8_t packetIndex = 0;
+
+void setup()
+{
+    Serial.begin(115200);
+    Serial1.begin(115200, SERIAL_8N1, LIDAR_TX, -1); // RX, TX
+
+    memset(packet, 0, sizeof(packet));
+}
+
+struct DecodedPacket
+{
+    uint16_t angle;
+    uint16_t speed;
+    uint16_t distance[DISTANCES_PER_PACKET];
+};
+
+DecodedPacket decodePacket()
+{
+    DecodedPacket dp;
+
+    dp.angle = (packet[1] - 0xA0) * 4;
+
+    dp.speed = ((uint16_t)packet[3] << 8) | packet[2];
+
+    for (int i = 0; i < DISTANCES_PER_PACKET; i++)
+    {
+        int pi = 4 + 4 * i;
+        dp.distance[i] = (((uint16_t)packet[pi + i] & 0x3D) << 8) | packet[pi];
+    }
+
+    return dp;
+}
+
+void sendData(DecodedPacket const &p)
+{
+    Serial.print(p.angle);
+    Serial.print(" ");
+    Serial.print(p.speed);
+    Serial.print(" ");
+    for (int i = 0; i < DISTANCES_PER_PACKET; i++) 
+    {
+        Serial.print(p.distance[i]);
+        Serial.print(" ");
     }
     Serial.println();
 }
 
-void f(void*) {
-    delay(12);
+void loop()
+{
+    static bool waitPacket = true;
 
-    size = Serial1.available();
-    Serial1.readBytes(buffer, size);
+    if (Serial1.available())
+    {
+        byte byteRead = Serial1.read();
 
-    printBuffer();
-    
-    acceptsInterrupts = true;
+        if (waitPacket)
+        {
+            if (byteRead == HEAD_BYTE)
+            {
+                packetIndex = 0;
+                packet[packetIndex++] = byteRead;
+                waitPacket = false;
+            }
+        }
+        else
+        {
+            if (packet[0] == HEAD_BYTE)
+            {
+                packet[packetIndex++] = byteRead;
 
-    vTaskDelete(NULL);
-}
+                if (packetIndex >= PACKET_SIZE)
+                {
+                    waitPacket = true;
 
-void IRAM_ATTR isr() {
-    if (!acceptsInterrupts)
-        return;
-
-    xTaskCreatePinnedToCore(f, NULL, 8192, NULL, 1, NULL, 0);
-
-    acceptsInterrupts = false;
-}
-
-void setup() {
-    Serial.begin(921600);
-    Serial1.begin(115200, SERIAL_8N1, LIDAR_TX, -1);
-     
-    attachInterrupt(digitalPinToInterrupt(LIDAR_TX), isr, FALLING);
-}
-
-
-void loop() {
-    delay(1000);
+                    DecodedPacket p = decodePacket();
+                    sendData(p);
+                }
+            }
+        }
+    }
 }
