@@ -12,19 +12,23 @@ struct LidarPacket
 
 void onDataRecv(const uint8_t* mac, const uint8_t* data, int len)
 {
-    LidarPacket p;
-    memcpy(&p, data, len);
+    LidarPacket* p = (LidarPacket*)data;
 
-    Serial.print(p.angle);
+    Serial.print(p->angle);
     Serial.print(" ");
-    Serial.print(p.speed);
+    Serial.print(p->speed);
     Serial.print(" ");
     for (int i = 0; i < 4; i++) 
     {
-        Serial.print(p.distance[i]);
+        Serial.print(p->distance[i]);
         Serial.print(" ");
     }
     Serial.println();
+
+    // for (int i = 0; i < len; i++) {
+    //     Serial.printf("%02X ", data[i]);
+    // }
+    // Serial.println("");
 }
 
 void setup()
