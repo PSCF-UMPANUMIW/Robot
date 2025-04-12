@@ -1,0 +1,2 @@
+Base station ESP32: C4:D8:D5:BE:92:B4
+Robot ESP32: CC:7B:5C:F0:95:40
