@@ -4,6 +4,7 @@
 #include <functional>
 
 #include "LidarPacket.hpp"
+#include "Buffer.hpp"
 
 class LidarReader
 {
@@ -21,15 +22,16 @@ public:
             const byte b = uart.read();
 
             if (b == HEAD_BYTE)
-                packetIndex = 0;
+            {
+                buffer.clear();
+            }
 
-            packet[packetIndex++] = b;
+            buffer.push(b);
 
-            if (packetIndex >= PACKET_SIZE)
+            if (buffer.isFull())
             {
                 LidarPacket lp = decodePacket();
                 if (callback) callback(lp);
-                packetIndex = PACKET_SIZE-1;
             }
         }
     }
@@ -38,13 +40,13 @@ public:
     {
         LidarPacket lp;
 
-        lp.angle = (packet[1] - 0xA0) * 4;
-        lp.speed = ((uint16_t)packet[3] << 8) | packet[2];
+        lp.angle = (buffer[1] - 0xA0) * 4;
+        lp.speed = ((uint16_t)buffer[3] << 8) | buffer[2];
 
         for (int i = 0; i < DISTANCES_PER_PACKET; i++)
         {
             int pi = 4 + 4 * i;
-            lp.distance[i] = (((uint16_t)packet[pi + i] & 0x3D) << 8) | packet[pi];
+            lp.distance[i] = (((uint16_t)buffer[pi + i] & 0x3D) << 8) | buffer[pi];
         }
 
         return lp;
@@ -58,6 +60,5 @@ private:
     HardwareSerial& uart;
     DataReadyCallback callback;
 
-    byte packet[PACKET_SIZE];
-    int  packetIndex = 0;
+    Buffer<byte, PACKET_SIZE> buffer;
 };
