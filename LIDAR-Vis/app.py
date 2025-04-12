@@ -13,7 +13,6 @@ class LidarPoint:
 
 class LidarVis:
     def __init__(self, port, baudrate):
-        self.datalen = 6
         self.port = port
         self.baudrate = baudrate
         self.data : list[LidarPoint] = []
@@ -40,23 +39,20 @@ class LidarVis:
         
         try:
             while True:
-                print(self.serial.in_waiting)
                 if self.serial.in_waiting > 0:
                     try:
                         sensor_data = self.serial.readline().decode().rstrip().split(' ')
                         for i in range(DISTANCES_PER_PACKET):
                             angle = int(sensor_data[0]) + i
                             dist = int(sensor_data[2+i])
-                            self.data.append(LidarPoint(dist, angle))
+                            if dist > 120:
+                                self.data.append(LidarPoint(dist, angle))
                     except:
-                        print("No newline in buffer?")
                         continue
-                
                 if len(self.data) >= self.MAX_POINTS:
                     self._update_plot(ax, scatter)
                     plt.pause(0.1)
                     self.data = []
-
         except KeyboardInterrupt:
             print("Data collection interrupted by user.")
         
@@ -72,13 +68,13 @@ class LidarVis:
         # Clear previous data
         scatter.set_offsets([(a, r) for a, r in zip(angles, distances)])
         
-        ax.set_rlim(0, 4000)  # Add 10% margin
+        ax.set_rlim(0, 1000)
         
         plt.draw()
 
 
 def main():
-    port = "/dev/ttyUSB0"
+    port = "COM4"
     baudrate = 115200
     
     lidar_vis = LidarVis(port, baudrate)

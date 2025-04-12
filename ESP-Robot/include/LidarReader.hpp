@@ -1,13 +1,14 @@
 #pragma once
 
 #include <Arduino.h>
+#include <functional>
 
 #include "LidarPacket.hpp"
 
 class LidarReader
 {
 public:
-    using DataReadyCallback = void (*)(LidarPacket const&);
+    using DataReadyCallback = std::function<void(LidarPacket const&)>;
 
     LidarReader(HardwareSerial& serial, DataReadyCallback callback)
         : uart(serial), callback(callback)
