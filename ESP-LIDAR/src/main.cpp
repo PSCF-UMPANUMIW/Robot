@@ -6,26 +6,24 @@
 
 static LidarReader* lidarReader;
 
-void printLidarPacket(LidarPacket const& p)
-{
-    Serial.print(p.angle);
-    Serial.print(" ");
-    Serial.print(p.speed);
-    Serial.print(" ");
-    for (int i = 0; i < 4; i++) 
-    {
-        Serial.print(p.distance[i]);
-        Serial.print(" ");
-    }
-    Serial.println();
-}
-
 void setup()
 {
     Serial.begin(115200);
     Serial1.begin(115200, SERIAL_8N1, LIDAR_TX, -1);
 
-    lidarReader = new LidarReader(Serial1, printLidarPacket);
+    lidarReader = new LidarReader(Serial1, [](LidarPacket const& lp) {
+        Serial.print("Angle: ");
+        Serial.print(lp.angle);
+        Serial.print(", Speed: ");
+        Serial.print(lp.speed);
+        Serial.print(", Distances: ");
+        for (int i = 0; i < 4; i++)
+        {
+            Serial.print(lp.distance[i]);
+            if (i < 3) Serial.print(", ");
+        }
+        Serial.println();
+    });
 }
 
 void loop()
