@@ -10,26 +10,14 @@
 #include "EspNowClient.hpp"
 
 static LidarReader* lidarReader;
-static esp_now_peer_info_t peerInfo;
+static EspNowClient* espNowClient;
 
 void setup()
 {
     Serial.begin(115200);
     Serial1.begin(115200, SERIAL_8N1, LIDAR_TX, -1);
 
-    WiFi.mode(WIFI_STA);
-    WiFi.disconnect();
-
-    if (esp_now_init() != ESP_OK)
-        Serial.println("Error initializing ESP-NOW.");
-    
-    memcpy(peerInfo.peer_addr, BASE_STATION_MAC_ADDR, 6);
-    peerInfo.channel = 0;
-    peerInfo.encrypt = false;
-
-    if (esp_now_add_peer(&peerInfo) != ESP_OK)
-        Serial.println("Error adding ESP-NOW peer.");
-    
+    espNowClient = new EspNowClient();
 
     lidarReader = new LidarReader(Serial1, [](LidarPacket const& lp) {
         esp_err_t res = esp_now_send(BASE_STATION_MAC_ADDR, (uint8_t*)&lp, sizeof(lp));
