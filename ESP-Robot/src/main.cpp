@@ -6,7 +6,7 @@
 #include "pins.hpp"
 #include "constants.hpp"
 #include "LidarReader.hpp"
-#include "LidarPacket.hpp"
+#include "LidarMeasurement.hpp"
 #include "EspNowClient.hpp"
 
 static LidarReader* lidarReader;
@@ -19,7 +19,7 @@ void setup()
 
     espNowClient = new EspNowClient();
 
-    lidarReader = new LidarReader(Serial1, [](LidarPacket const& lp) {
+    lidarReader = new LidarReader(Serial1, [](LidarMeasurement const& lp) {
         esp_err_t res = esp_now_send(BASE_STATION_MAC_ADDR, (uint8_t*)&lp, sizeof(lp));
         if (res != ESP_OK)
             Serial.printf("Error sending ESP-NOW message: %i = %s\n", res, esp_err_to_name(res));

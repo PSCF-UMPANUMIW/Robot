@@ -3,13 +3,13 @@
 #include <Arduino.h>
 #include <functional>
 
-#include "LidarPacket.hpp"
+#include "LidarMeasurement.hpp"
 #include "Buffer.hpp"
 
 class LidarReader
 {
 public:
-    using DataReadyCallback = std::function<void(LidarPacket const&)>;
+    using DataReadyCallback = std::function<void(LidarMeasurement const&)>;
 
     LidarReader(HardwareSerial& serial, DataReadyCallback callback)
         : uart(serial), callback(callback)
@@ -30,15 +30,15 @@ public:
 
             if (buffer.isFull())
             {
-                LidarPacket lp = decodePacket();
+                LidarMeasurement lp = decodeMeasurement();
                 if (callback) callback(lp);
             }
         }
     }
 
-    LidarPacket decodePacket() const
+    LidarMeasurement decodeMeasurement() const
     {
-        LidarPacket lp;
+        LidarMeasurement lp;
 
         lp.angle = (buffer[1] - 0xA0) * 4;
         lp.speed = ((uint16_t)buffer[3] << 8) | buffer[2];

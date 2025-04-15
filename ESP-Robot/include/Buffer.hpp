@@ -25,7 +25,7 @@ public:
         idx = 0;
     }
 
-    const T operator[](size_t index) const
+    const T& operator[](size_t index) const
     {
         return buffer[index];
     }

@@ -5,8 +5,9 @@
 #include <esp_wifi.h>
 #include <esp_now.h>
 
-#include "LidarPacket.hpp"
 #include "constants.hpp"
+#include "ESP_NOW_Payloads/PacketType.hpp"
+#include "ESP_NOW_Payloads/PayloadTraits.hpp"
 
 class EspNowClient
 {
@@ -32,24 +33,19 @@ public:
         }
     }
 
-    void addLidarPacket(LidarPacket const& lp)
+    template<typename PayloadType>
+    void sendMessage(PayloadType payload)
     {
-        lidarPackets[lidarPacketsIndex++] = lp;
+        constexpr PacketType ID = PayloadTraits<PayloadType>::packetType;
 
-        if (lidarPacketsIndex >= LIDAR_PACKETS_PER_ESP_NOW_MESSAGE)
-        {
-            esp_err_t result = esp_now_send(BASE_STATION_MAC_ADDR, (uint8_t*)lidarPackets, sizeof(lidarPackets));
+        static_assert(ID != PacketType::UNSPECIFIED, "Payload type not supported.");
 
-            if (result != ESP_OK)
-            {
-                Serial.println("Error sending ESP-NOW message.");
-            }
-
-            lidarPacketsIndex = 0;
-        }
+        sendMessage<ID>(payload);
     }
+    
 
-    template<uint8_t ID, typename PayloadType>
+private:
+    template<PacketType ID, typename PayloadType>
     void sendMessage(PayloadType payload)
     {
         const size_t idSize      = sizeof(ID);
@@ -75,12 +71,5 @@ public:
         }
     }
 
-private:
-    static constexpr int MAX_MSG_LENGTH = 250;
-    static constexpr int LIDAR_PACKETS_PER_ESP_NOW_MESSAGE = MAX_MSG_LENGTH / sizeof(LidarPacket);
-
     esp_now_peer_info_t peerInfo;
-
-    LidarPacket lidarPackets[LIDAR_PACKETS_PER_ESP_NOW_MESSAGE];
-    int lidarPacketsIndex = 0;
 };
