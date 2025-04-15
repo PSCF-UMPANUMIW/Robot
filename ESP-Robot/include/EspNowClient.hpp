@@ -12,7 +12,7 @@
 class EspNowClient
 {
 public:
-    EspNowClient()
+    static void init()
     {
         WiFi.mode(WIFI_STA);
         WiFi.disconnect();
@@ -21,55 +21,37 @@ public:
         {
             Serial.println("Error initializing ESP-NOW.");
         }
+    }
 
-        memcpy(peerInfo.peer_addr, BASE_STATION_MAC_ADDR, 6);
-        peerInfo.channel = 0;
-        peerInfo.encrypt = false;
-        peerInfo.ifidx = WIFI_IF_STA;
+    static void addPeer(const byte* peerMacAddr)
+    {
+        esp_now_peer_info_t peerInfo = {
+            .channel = 0,
+            .ifidx = WIFI_IF_STA,
+            .encrypt = false,
+        };
+        memcpy(peerInfo.peer_addr, peerMacAddr, 6);
 
-        if (esp_now_add_peer(&peerInfo) != ESP_OK)
-        {
-            Serial.println("Error adding ESP-NOW peer.");
-        }
+        ESP_ERROR_CHECK(esp_now_add_peer(&peerInfo));
     }
 
     template<typename PayloadType>
-    void sendMessage(PayloadType payload)
+    static void sendMessage(PayloadType const& payload)
     {
         constexpr PacketType ID = PayloadTraits<PayloadType>::packetType;
 
         static_assert(ID != PacketType::UNSPECIFIED, "Payload type not supported.");
+        
+        constexpr size_t ID_SIZE      = sizeof(ID);
+        constexpr size_t PAYLOAD_SIZE = sizeof(payload);
+        constexpr size_t MESSAGE_SIZE = ID_SIZE + PAYLOAD_SIZE;
 
-        sendMessage<ID>(payload);
+        static_assert(MESSAGE_SIZE < ESP_NOW_MAX_PACKET_SIZE, "Payload size exceeds maximum limit.");
+
+        uint8_t buffer[MESSAGE_SIZE];
+        memcpy(buffer,           &ID,      ID_SIZE);
+        memcpy(buffer + ID_SIZE, &payload, PAYLOAD_SIZE);
+
+        ESP_ERROR_CHECK(esp_now_send(NULL, buffer, MESSAGE_SIZE)); // NULL = send to all registered peers
     }
-    
-
-private:
-    template<PacketType ID, typename PayloadType>
-    void sendMessage(PayloadType payload)
-    {
-        const size_t idSize      = sizeof(ID);
-        const size_t payloadSize = sizeof(PayloadType);
-        const size_t messageSize = idSize + payloadSize;
-
-        if (messageSize > 250) {
-            Serial.println("Message payload too big");
-            return;
-        }
-
-        uint8_t buffer[messageSize];
-
-        auto id = ID;
-        memcpy(buffer, &id, idSize);
-        memcpy(buffer + idSize, &payload, payloadSize);
-
-        esp_err_t result = esp_now_send(BASE_STATION_MAC_ADDR, buffer, messageSize);
-
-        if (result != ESP_OK)
-        {
-            Serial.println("Error sending ESP-NOW message.");
-        }
-    }
-
-    esp_now_peer_info_t peerInfo;
 };

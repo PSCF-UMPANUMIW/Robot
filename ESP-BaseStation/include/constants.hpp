@@ -1,5 +1,0 @@
-#pragma once
-
-#include <cstdint>
-
-constexpr uint8_t ROBOT_MAC_ADDR[] = {0xCC, 0x7B, 0x5C, 0xF0, 0x95, 0x40};

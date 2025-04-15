@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "system_error": "cpp",
-        "iterator": "cpp"
+        "iterator": "cpp",
+        "cstring": "cpp"
     }
 }
