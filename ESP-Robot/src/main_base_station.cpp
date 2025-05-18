@@ -1,20 +1,53 @@
 #include <Arduino.h>
+#include "EspNowClient.hpp"
+
+#include "ESP_NOW_Payloads/PayloadMoveCommand.hpp"
 
 void setup()
 {
     Serial.begin(115200);
+
+    EspNowClient::init();
+    EspNowClient::addPeer(ROBOT_MAC_ADDR);
+
     Serial.println("Base Station Setup Complete");
 }
 
 void loop()
 {
-    static int n = 0;
-    Serial.printf("Base Station Loop %d\n", n++);
-
-    if (digitalRead(0) == LOW)
+    if (Serial.available())
     {
-        Serial.println("Base Station button pressed");
-        delay(500);
+        const char c = Serial.read();
+
+        while (Serial.available())
+            Serial.read();
+
+        PayloadMoveCommand comm;
+
+        switch (c)
+        {
+            case 'w':
+                comm.distanceL = 100;
+                comm.distanceR = 100;
+                break;
+            case 's':
+                comm.distanceL = -100;
+                comm.distanceR = -100;
+                break;
+            case 'a':
+                comm.distanceL = -100;
+                comm.distanceR = 100;
+                break;
+            case 'd':
+                comm.distanceL = 100;
+                comm.distanceR = -100;
+                break;
+            default:
+                return;
+        }
+
+        EspNowClient::sendMessage(comm);
+
+        delay(200);
     }
-    delay(1000);
 }

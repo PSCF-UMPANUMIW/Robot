@@ -32,8 +32,8 @@ LidarMeasurement LidarReader::decodeMeasurement() const
 {   
     LidarMeasurement lp;
     
-    lp.angle = (buffer[1] - 0xA0) * 4;
-    lp.speed = ((uint16_t)buffer[3] << 8) | buffer[2];
+    lp.startAngle = (buffer[1] - 0xA0) * 4;
+    //lp.speed = ((uint16_t)buffer[3] << 8) | buffer[2];
     
     for (int i = 0; i < DISTANCES_PER_PACKET; i++)
     {

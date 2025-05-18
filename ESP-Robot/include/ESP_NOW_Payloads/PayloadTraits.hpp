@@ -1,30 +1,39 @@
 #pragma once
 
-#include "PacketType.hpp"
+#include "PacketID.hpp"
 #include "PayloadLidar.hpp"
 #include "PayloadLog.hpp"
 #include "PayloadSensors.hpp"
+#include "PayloadMoveCommand.hpp"
 
 template<typename PayloadType>
 struct PayloadTraits
 {
-    static constexpr PacketType packetType = PacketType::UNSPECIFIED;
+    static constexpr PacketID packetType = PacketID::UNSPECIFIED;
 };
+
+
 
 template<>
 struct PayloadTraits<PayloadLidar>
 {
-    static constexpr PacketType packetType = PacketType::LIDAR;
+    static constexpr PacketID packetType = PacketID::LIDAR;
 };
 
 template<>
 struct PayloadTraits<PayloadLog>
 {
-    static constexpr PacketType packetType = PacketType::LOG;
+    static constexpr PacketID packetType = PacketID::LOG;
 };
 
 template<>
 struct PayloadTraits<PayloadSensors>
 {
-    static constexpr PacketType packetType = PacketType::SENSORS;
+    static constexpr PacketID packetType = PacketID::SENSORS;
+};
+
+template<>
+struct PayloadTraits<PayloadMoveCommand>
+{
+    static constexpr PacketID packetType = PacketID::MOVE_COMMAND;
 };

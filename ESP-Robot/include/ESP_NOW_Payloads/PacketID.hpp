@@ -2,10 +2,11 @@
 
 #include <cstdint>
 
-enum class PacketType : uint8_t
+enum class PacketID : uint8_t
 {
     UNSPECIFIED = 0,
     LIDAR,
     LOG,
     SENSORS,
+    MOVE_COMMAND,
 };
