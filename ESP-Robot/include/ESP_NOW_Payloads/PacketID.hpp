@@ -9,4 +9,5 @@ enum class PacketID : uint8_t
     LOG,
     SENSORS,
     MOVE_COMMAND,
+    MOTOR_CONFIG,
 };

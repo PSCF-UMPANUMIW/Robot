@@ -5,13 +5,13 @@
 #include "PayloadLog.hpp"
 #include "PayloadSensors.hpp"
 #include "PayloadMoveCommand.hpp"
+#include "PacketMotorConfig.hpp"
 
 template<typename PayloadType>
 struct PayloadTraits
 {
     static constexpr PacketID packetType = PacketID::UNSPECIFIED;
 };
-
 
 
 template<>
@@ -36,4 +36,10 @@ template<>
 struct PayloadTraits<PayloadMoveCommand>
 {
     static constexpr PacketID packetType = PacketID::MOVE_COMMAND;
+};
+
+template<>
+struct PayloadTraits<PacketMotorConfig>
+{
+    static constexpr PacketID packetType = PacketID::MOTOR_CONFIG;
 };

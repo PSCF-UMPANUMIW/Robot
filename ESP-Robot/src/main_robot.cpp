@@ -33,30 +33,6 @@ void onLidarMeasurement(LidarMeasurement const& m)
     buffer.add(m);
 }
 
-void w()
-{
-    stepperL.move(100);
-    stepperR.move(100);
-}
-
-void s()
-{
-    stepperL.move(-100);
-    stepperR.move(-100);
-}
-
-void a()
-{
-    stepperL.move(-100);
-    stepperR.move(100);
-}
-
-void d()
-{
-    stepperL.move(100);
-    stepperR.move(-100);
-}
-
 void setup()
 {
     Serial.begin(115200);
@@ -64,14 +40,28 @@ void setup()
     EspNowClient::init();
     EspNowClient::addPeer(BASE_STATION_MAC_ADDR);
 
-    EspNowClient::registerPayloadHandler<PayloadMoveCommand>([](void* payload) {
-        
-        PayloadMoveCommand& p = *static_cast<PayloadMoveCommand*>(payload);
+    EspNowClient::registerPayloadHandler<PayloadMoveCommand>(
+        [](PayloadMoveCommand const& payload)
+        {
+            stepperL.move(payload.distanceL);
+            stepperR.move(payload.distanceR);
+        }
+    );
 
-        Serial.printf("Received move command: L: %d, R: %d\n", p.distanceL, p.distanceR);
-        // stepperL.move(payload.distanceL);
-        // stepperR.move(payload.distanceR);
-    });
+    EspNowClient::registerPayloadHandler<PacketMotorConfig>(
+        [](PacketMotorConfig const& payload)
+        {
+            driverL.rms_current(payload.rmsCurrent_mA);
+            driverL.microsteps(payload.microsteps);
+            stepperL.setMaxSpeed(payload.maxSpeed);
+            stepperL.setAcceleration(payload.maxAcceleration);
+
+            driverR.rms_current(payload.rmsCurrent_mA);
+            driverR.microsteps(payload.microsteps);
+            stepperR.setMaxSpeed(payload.maxSpeed);
+            stepperR.setAcceleration(payload.maxAcceleration);
+        }
+    );
     
     // Serial1.begin(115200, SERIAL_8N1, LIDAR_TX, -1);
     // lidarReader = new LidarReader(Serial1, onLidarMeasurement);
@@ -81,21 +71,11 @@ void setup()
     driverL.begin();
     driverR.begin();
 
-    driverL.rms_current(1200); // set motor RMS current
-    driverL.microsteps(0); // set microsteps to 16
+    driverL.rms_current(1200);
+    driverL.microsteps(0);
 
-    driverR.rms_current(1200); // set motor RMS current
-    driverR.microsteps(0); // set microsteps to 16
-
-    // read back data from driver
-    Serial.print("Driver L: ");
-    Serial.print("rms_current: "); Serial.println(driverL.rms_current(), DEC);
-    Serial.print("microsteps: "); Serial.println(driverL.microsteps(), DEC);
-
-    Serial.print("Driver R: ");
-    Serial.print("rms_current: "); Serial.println(driverR.rms_current(), DEC);
-    Serial.print("microsteps: "); Serial.println(driverR.microsteps(), DEC);
-
+    driverR.rms_current(1200);
+    driverR.microsteps(0);
     
     stepperL.setEnablePin(14);
     stepperL.setPinsInverted(false, false, true);
@@ -103,11 +83,11 @@ void setup()
     stepperR.setEnablePin(14);
     stepperR.setPinsInverted(true, false, true);
 
-    stepperL.setMaxSpeed(400);
+    stepperL.setMaxSpeed(800);
     stepperL.setAcceleration(400);
     stepperL.setCurrentPosition(0);
 
-    stepperR.setMaxSpeed(400);
+    stepperR.setMaxSpeed(800);
     stepperR.setAcceleration(400);
     stepperR.setCurrentPosition(0);
 
@@ -115,71 +95,14 @@ void setup()
     stepperR.enableOutputs();
 
 
-
-    // // ESPNOW receive callback
-    // esp_now_register_recv_cb([](const uint8_t* mac_addr, const uint8_t* data, int data_len) {
-    //     Serial.print("Received data: ");
-    //     for (int i = 0; i < data_len; i++)
-    //     {
-    //         Serial.print(data[i], DEC);
-    //         Serial.print(" ");
-    //     }
-
-    //     if (data_len != 1)
-    //         return;
-        
-    //     switch (data[0])
-    //     {
-    //     case 1:
-    //         w();
-    //         break;
-    //     case 2:
-    //         s();
-    //         break;
-    //     case 3:
-    //         a();
-    //         break;
-    //     case 4:
-    //         d();
-    //         break;
-    //     }
-    // });
-
-
     Serial.println("Robot Setup Complete");
 }
 
-void serialStepperDemo();
+
 
 void loop()
 {
     // lidarReader->readData();
-
-    serialStepperDemo();
-    
     stepperL.run();
     stepperR.run();
-}
-
-void serialStepperDemo()
-{
-    if (Serial.available())
-    {
-        char c = Serial.read();
-        switch (c)
-        {
-            case 'i':
-                w();
-                break;
-            case 'k':
-                s();
-                break;
-            case 'j':
-                a();
-                break;
-            case 'l':
-                d();
-                break;
-        }
-    }
 }

@@ -19,8 +19,6 @@ public:
         WiFi.mode(WIFI_STA);
         WiFi.disconnect();
 
-        
-
         ESP_ERROR_CHECK(esp_now_init());
 
         esp_now_register_recv_cb(recvHandlerDelegate);
@@ -59,14 +57,19 @@ public:
     }
 
     template<typename TPacket>
-    static void registerPayloadHandler(std::function<void(void*)> handler)
+    static void registerPayloadHandler(std::function<void(TPacket const& packet)> handler)
     {
+        auto newHandler = [handler](const void* rawData) {
+            handler(*reinterpret_cast<const TPacket*>(rawData));
+        };
+        
         PacketID packetType = PayloadTraits<TPacket>::packetType;
-
-        s_handlers[packetType] = handler;
+        s_handlers[packetType] = newHandler;
     }
 
 private:
+    using HandlerBase = std::function<void(const void*)>;
+
     static void recvHandlerDelegate(const uint8_t* mac_addr, const uint8_t* data, int data_len)
     {
         PacketID packetType = static_cast<PacketID>(data[0]);
@@ -77,5 +80,5 @@ private:
         }
     }
 
-    static std::unordered_map<PacketID, std::function<void(void*)>> s_handlers;
+    static std::unordered_map<PacketID, HandlerBase> s_handlers;
 };

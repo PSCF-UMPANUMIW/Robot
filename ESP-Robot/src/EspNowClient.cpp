@@ -1,3 +1,3 @@
 #include "EspNowClient.hpp"
 
-std::unordered_map<PacketID, std::function<void(void*)>> EspNowClient::s_handlers;
+std::unordered_map<PacketID, EspNowClient::HandlerBase> EspNowClient::s_handlers;

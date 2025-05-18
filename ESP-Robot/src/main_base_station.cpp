@@ -13,6 +13,32 @@ void setup()
     Serial.println("Base Station Setup Complete");
 }
 
+void sendMove(long l, long r)
+{
+    PayloadMoveCommand comm {
+        .distanceL = l,
+        .distanceR = r,
+    };
+
+    EspNowClient::sendMessage(comm);
+}
+
+
+static float maxSpeed = 400.0f;
+static float maxAcceleration = 400.0f;
+
+void sendMotorConf()
+{
+    PacketMotorConfig conf {
+        .rmsCurrent_mA = 1200,
+        .microsteps = 0,
+        .maxSpeed = maxSpeed,
+        .maxAcceleration = maxAcceleration,
+    };
+
+    EspNowClient::sendMessage(conf);
+}
+
 void loop()
 {
     if (Serial.available())
@@ -22,31 +48,46 @@ void loop()
         while (Serial.available())
             Serial.read();
 
-        PayloadMoveCommand comm;
-
         switch (c)
         {
+            case '2':
+                sendMove(2000, 2000);
+                break;
             case 'w':
-                comm.distanceL = 100;
-                comm.distanceR = 100;
+                sendMove(200, 200);
                 break;
             case 's':
-                comm.distanceL = -100;
-                comm.distanceR = -100;
+                sendMove(-200, -200);
                 break;
             case 'a':
-                comm.distanceL = -100;
-                comm.distanceR = 100;
+                sendMove(-50, 50);
                 break;
             case 'd':
-                comm.distanceL = 100;
-                comm.distanceR = -100;
+                sendMove(50, -50);
+                break;
+            case 'i':
+                maxSpeed += 50.0f;
+                sendMotorConf();
+                Serial.printf("Max Speed: %.2f\n", maxSpeed);
+                break;
+            case 'k':
+                maxSpeed -= 50.0f;
+                sendMotorConf();
+                Serial.printf("Max Speed: %.2f\n", maxSpeed);
+                break;
+            case 'o':
+                maxAcceleration += 50.0f;
+                sendMotorConf();
+                Serial.printf("Max Acceleration: %.2f\n", maxAcceleration);
+                break;
+            case 'l':
+                maxAcceleration -= 50.0f;
+                sendMotorConf();
+                Serial.printf("Max Acceleration: %.2f\n", maxAcceleration);
                 break;
             default:
                 return;
         }
-
-        EspNowClient::sendMessage(comm);
 
         delay(200);
     }
