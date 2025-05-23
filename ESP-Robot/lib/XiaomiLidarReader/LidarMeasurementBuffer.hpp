@@ -1,8 +1,8 @@
 #pragma once
 
-#include "LidarMeasurement.hpp"
-#include "ESP_NOW_Payloads/PayloadLidar.hpp"
-#include "EspNowClient.hpp"
+#include <LidarMeasurement.hpp>
+#include <EspNowClient.hpp>
+#include <Payloads/PayloadLidar.hpp>
 
 class LidarMeasurementBuffer
 {
@@ -15,7 +15,7 @@ public:
 
         if (idx >= PayloadLidar::MEASUREMENTS_PER_PACKET)
         {
-            EspNowClient::sendMessage(payload);
+            EspNowClient::instance().sendMessage(payload);
             idx = 0;
         }
     }

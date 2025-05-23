@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-struct PacketMotorConfig
+struct PayloadMotorConfig
 {
     uint16_t rmsCurrent_mA;
     uint16_t microsteps;

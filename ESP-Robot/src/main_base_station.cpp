@@ -7,7 +7,7 @@ void setup()
 {
     Serial.begin(115200);
 
-    EspNowClient::init();
+    EspNowClient::begin();
     EspNowClient::addPeer(ROBOT_MAC_ADDR);
 
     Serial.println("Base Station Setup Complete");
@@ -29,7 +29,7 @@ static float maxAcceleration = 400.0f;
 
 void sendMotorConf()
 {
-    PacketMotorConfig conf {
+    PayloadMotorConfig conf {
         .rmsCurrent_mA = 1200,
         .microsteps = 0,
         .maxSpeed = maxSpeed,
