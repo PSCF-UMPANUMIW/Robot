@@ -1,12 +1,10 @@
 #pragma once
 
 #include <cstdint>
+#include "../../WheelPlatform/SettingsLevel.hpp"
 
 struct PayloadMotorConfig
 {
-    uint16_t rmsCurrent_mA;
-    uint16_t microsteps;
-
-    float maxSpeed;
-    float maxAcceleration;
+    SettingsLevel speed, acceleration, current;
+    bool enableSteppers;
 };

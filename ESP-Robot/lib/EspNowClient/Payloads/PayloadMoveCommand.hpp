@@ -2,6 +2,6 @@
 
 struct PayloadMoveCommand
 {
-    long int distanceL;
-    long int distanceR;
+    bool isRotation;
+    float value;
 };

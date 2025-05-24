@@ -1,28 +1,39 @@
 #include <Arduino.h>
-#include <Wire.h>
 
 #include "pins.hpp"
 #include "constants.hpp"
 
-#include <LidarReader.hpp>
-#include <LidarMeasurementBuffer.hpp>
-
 #include <EspNowClient.hpp>
 #include <Payloads/PayloadTraits.hpp>
+
+#include <LidarReader.hpp>
+#include <LidarMeasurementBuffer.hpp>
 
 #include <SensorManager.hpp>
 #include <GroundSensor.hpp>
 #include <ProximitySensor.hpp>
 #include <VoltageSensor.hpp>
+#include <Wire.h>
 #include <IMU6AxisSensor.hpp>
 #include <MagnetometerSensor.hpp>
 
+#include <TMCStepper.h>
+#include <AccelStepper.h>
+#include <ManagedStepper.hpp>
+#include <WheelPlatform.hpp>
+
+#pragma region lidar
+
 static LidarReader lidarReader(
-    Serial1,
+    SERIAL_LIDAR,
     LIDAR_PINS.data,
     LIDAR_PINS.enable,
     LIDAR_PINS.motor_enable
 );
+
+#pragma endregion
+
+#pragma region sensors
 
 static GroundSensor  groundSensorLeft(GroundSensor::Position::LEFT,  IR_SENSOR_PINS[0].analog_in, 0, 4095);
 static GroundSensor groundSensorFront(GroundSensor::Position::FRONT, IR_SENSOR_PINS[1].analog_in, 0, 4095);
@@ -55,20 +66,22 @@ static ISensor* sensors[] = {
     &magnetometer
 };
 
-#include <TMCStepper.h>
-#include <AccelStepper.h>
+#pragma endregion
 
-#define TMC_SERIAL_PORT Serial2
-#define DRIVER_L_ADDRESS 0b00
-#define DRIVER_R_ADDRESS 0b01
-#define R_SENSE 0.11f
+#pragma region motors
 
-static TMC2209Stepper driverL(&TMC_SERIAL_PORT, R_SENSE, DRIVER_L_ADDRESS);
-static TMC2209Stepper driverR(&TMC_SERIAL_PORT, R_SENSE, DRIVER_R_ADDRESS);
+static TMC2209Stepper driverL(&SERIAL_TMC, TMC_R_SENSE, 0b00);
+static TMC2209Stepper driverR(&SERIAL_TMC, TMC_R_SENSE, 0b01);
 
 static AccelStepper stepperL(AccelStepper::DRIVER, STEPPER_L_PINS.step, STEPPER_L_PINS.dir);
 static AccelStepper stepperR(AccelStepper::DRIVER, STEPPER_R_PINS.step, STEPPER_R_PINS.dir);
 
+static ManagedStepper managedStepperL(stepperL, driverL, ROBOT_STEPS_PER_METER);
+static ManagedStepper managedStepperR(stepperR, driverR, ROBOT_STEPS_PER_METER);
+
+static WheelPlatform platform(managedStepperL, managedStepperR, 0.284f);
+
+#pragma endregion
 
 void setupLidar()
 {
@@ -80,38 +93,27 @@ void setupLidar()
     lidarReader.begin();
     lidarReader.setDataReadyCallback(lidarCallback);
     lidarReader.enableLaser();
-    lidarReader.setMotorSpeed(LidarReader::MotorSpeed::OFF);
+    lidarReader.setMotorSpeed(LidarReader::MotorSpeed::LOW_SPEED);
 }
 
 void setupMotors()
 {
-    Serial2.begin(115200, SERIAL_8N1, STEPPER_L_PINS.rx, STEPPER_L_PINS.tx);
-
     driverL.begin();
     driverR.begin();
 
-    driverL.rms_current(1200);
     driverL.microsteps(0);
-
-    driverR.rms_current(1200);
     driverR.microsteps(0);
-    
-    stepperL.setEnablePin(14);
-    stepperL.setPinsInverted(false, false, true);
 
-    stepperR.setEnablePin(14);
+    stepperL.setEnablePin(STEPPER_L_PINS.enable);
+    stepperR.setEnablePin(STEPPER_L_PINS.enable);
+
+    stepperL.setPinsInverted(false, false, true);
     stepperR.setPinsInverted(true, false, true);
 
-    stepperL.setMaxSpeed(800);
-    stepperL.setAcceleration(400);
     stepperL.setCurrentPosition(0);
-
-    stepperR.setMaxSpeed(800);
-    stepperR.setAcceleration(400);
     stepperR.setCurrentPosition(0);
 
-    // stepperL.enableOutputs();
-    // stepperR.enableOutputs();
+    platform.begin();
 }
 
 void setupEspNow()
@@ -123,23 +125,28 @@ void setupEspNow()
     client.registerPayloadHandler<PayloadMoveCommand>(
         [](PayloadMoveCommand const& payload)
         {
-            stepperL.move(payload.distanceL);
-            stepperR.move(payload.distanceR);
+            if (payload.isRotation)
+            {
+                platform.turn(payload.value);
+            }
+            else
+            {
+                platform.move(payload.value);
+            }
         }
     );
 
     client.registerPayloadHandler<PayloadMotorConfig>(
         [](PayloadMotorConfig const& payload)
         {
-            driverL.rms_current(payload.rmsCurrent_mA);
-            driverL.microsteps(payload.microsteps);
-            stepperL.setMaxSpeed(payload.maxSpeed);
-            stepperL.setAcceleration(payload.maxAcceleration);
+            platform.setMaxSpeed(payload.speed);
+            platform.setAcceleration(payload.acceleration);
+            platform.setDriverCurrent(payload.current);
 
-            driverR.rms_current(payload.rmsCurrent_mA);
-            driverR.microsteps(payload.microsteps);
-            stepperR.setMaxSpeed(payload.maxSpeed);
-            stepperR.setAcceleration(payload.maxAcceleration);
+            if (payload.enableSteppers)
+                platform.enableSteppers();
+            else
+                platform.disableSteppers();
         }
     );
 }
@@ -174,7 +181,7 @@ void setup()
                 delay(period_ms);
             }
         },
-        "Sensor data collection", 8192, NULL, 2, NULL, 1
+        "Sensor data collection", 8192, NULL, 2, NULL, 0
     );
 
     xTaskCreatePinnedToCore(
@@ -182,7 +189,8 @@ void setup()
             while (true)
             {
                 delay(100);
-                SensorManager::instance().printForTeleplot();
+                // SensorManager::instance().printForTeleplot();
+                Serial.println(driverL.rms_current());
             }
         },
         "Sensor raport", 8192, NULL, 1, NULL, 1
@@ -197,6 +205,7 @@ void loop()
 {
     lidarReader.readData();
 
-    // stepperL.run();
-    // stepperR.run();
+    platform.run();
 }
+
+

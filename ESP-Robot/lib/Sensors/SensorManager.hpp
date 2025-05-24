@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Payloads/PayloadSensors.hpp>
-#include <EspNowClient.hpp>
+#include "../EspNowClient/Payloads/PayloadSensors.hpp"
+class EspNowClient;
 
 class SensorManager
 {
@@ -16,7 +16,7 @@ public:
 
     PayloadSensors::ReadingsConverted& getConverted() { return payloadSensors.converted; }
 
-    void sendPayload() { EspNowClient::instance().sendMessage(payloadSensors); }
+    void sendPayload();
 
     void print();
     void printForTeleplot();

@@ -1,4 +1,11 @@
+#include <Arduino.h>
 #include <SensorManager.hpp>
+#include <EspNowClient.hpp>
+
+void SensorManager::sendPayload()
+{
+    EspNowClient::instance().sendMessage(payloadSensors);
+}
 
 void SensorManager::print()
 {

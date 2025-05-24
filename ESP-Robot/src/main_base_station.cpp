@@ -1,42 +1,47 @@
 #include <Arduino.h>
-#include "EspNowClient.hpp"
 
-#include "ESP_NOW_Payloads/PayloadMoveCommand.hpp"
+#include "constants.hpp"
+
+#include <EspNowClient.hpp>
+
+static constexpr bool ROTATION = true;
+static constexpr bool FORWARD  = false;
+
+static PayloadMotorConfig motorConfig {
+    .speed = SettingsLevel::LEVEL_LOW,
+    .acceleration = SettingsLevel::LEVEL_LOW,
+    .current = SettingsLevel::LEVEL_LOW,
+    .enableSteppers = true
+};
+
+void sendMove(bool isRotation, float value)
+{
+    PayloadMoveCommand comm {
+        .isRotation = isRotation,
+        .value = value
+    };
+
+    EspNowClient::instance().sendMessage(comm);
+}
+
+void sendMotorConf()
+{
+    EspNowClient::instance().sendMessage(motorConfig);
+}
+
 
 void setup()
 {
     Serial.begin(115200);
 
-    EspNowClient::begin();
-    EspNowClient::addPeer(ROBOT_MAC_ADDR);
+    auto& client = EspNowClient::instance();
+
+    client.begin();
+    client.addPeer(ROBOT_MAC_ADDR);
+
+    sendMotorConf();
 
     Serial.println("Base Station Setup Complete");
-}
-
-void sendMove(long l, long r)
-{
-    PayloadMoveCommand comm {
-        .distanceL = l,
-        .distanceR = r,
-    };
-
-    EspNowClient::sendMessage(comm);
-}
-
-
-static float maxSpeed = 400.0f;
-static float maxAcceleration = 400.0f;
-
-void sendMotorConf()
-{
-    PayloadMotorConfig conf {
-        .rmsCurrent_mA = 1200,
-        .microsteps = 0,
-        .maxSpeed = maxSpeed,
-        .maxAcceleration = maxAcceleration,
-    };
-
-    EspNowClient::sendMessage(conf);
 }
 
 void loop()
@@ -50,41 +55,70 @@ void loop()
 
         switch (c)
         {
-            case '2':
-                sendMove(2000, 2000);
+            case 'e':
+                sendMove(FORWARD, 2.f);
                 break;
             case 'w':
-                sendMove(200, 200);
+                sendMove(FORWARD, 0.2f);
                 break;
             case 's':
-                sendMove(-200, -200);
+                sendMove(FORWARD, -0.2f);
                 break;
             case 'a':
-                sendMove(-50, 50);
+                sendMove(ROTATION, -PI/8.f);
                 break;
             case 'd':
-                sendMove(50, -50);
+                sendMove(ROTATION, PI/8.f);
                 break;
-            case 'i':
-                maxSpeed += 50.0f;
+            
+            case '1':
+                motorConfig.speed = SettingsLevel::LEVEL_LOW;
                 sendMotorConf();
-                Serial.printf("Max Speed: %.2f\n", maxSpeed);
+                Serial.println("Speed set to LOW");
                 break;
-            case 'k':
-                maxSpeed -= 50.0f;
+            case '2':
+                motorConfig.speed = SettingsLevel::LEVEL_MEDIUM;
                 sendMotorConf();
-                Serial.printf("Max Speed: %.2f\n", maxSpeed);
+                Serial.println("Speed set to MEDIUM");
                 break;
-            case 'o':
-                maxAcceleration += 50.0f;
+            case '3':
+                motorConfig.speed = SettingsLevel::LEVEL_HIGH;
                 sendMotorConf();
-                Serial.printf("Max Acceleration: %.2f\n", maxAcceleration);
+                Serial.println("Speed set to HIGH");
                 break;
-            case 'l':
-                maxAcceleration -= 50.0f;
+
+            case '4':
+                motorConfig.acceleration = SettingsLevel::LEVEL_LOW;
                 sendMotorConf();
-                Serial.printf("Max Acceleration: %.2f\n", maxAcceleration);
+                Serial.println("Acceleration set to LOW");
                 break;
+            case '5':
+                motorConfig.acceleration = SettingsLevel::LEVEL_MEDIUM;
+                sendMotorConf();
+                Serial.println("Acceleration set to MEDIUM");
+                break;
+            case '6':
+                motorConfig.acceleration = SettingsLevel::LEVEL_HIGH;
+                sendMotorConf();
+                Serial.println("Acceleration set to HIGH");
+                break;
+
+            case '7':
+                motorConfig.current = SettingsLevel::LEVEL_LOW;
+                sendMotorConf();
+                Serial.println("Current set to LOW");
+                break;
+            case '8':
+                motorConfig.current = SettingsLevel::LEVEL_MEDIUM;
+                sendMotorConf();
+                Serial.println("Current set to MEDIUM");
+                break;
+            case '9':
+                motorConfig.current = SettingsLevel::LEVEL_HIGH;
+                sendMotorConf();
+                Serial.println("Current set to HIGH");
+                break;
+
             default:
                 return;
         }
