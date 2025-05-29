@@ -104,8 +104,6 @@ void WheelPlatform::turn(float angle)
 {
     const float wheelDistance = wheelbase * angle / 2;
 
-    Serial.printf("Turning %f radians by moving each wheel %f meters", angle, wheelDistance);
-
     stepperL.move(wheelDistance);
     stepperR.move(-wheelDistance);
 }

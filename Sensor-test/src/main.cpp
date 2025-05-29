@@ -6,11 +6,13 @@
 
 #include <Adafruit_Sensor.h>
 #include <Adafruit_MPU6050.h>
+#include <DFRobot_QMC5883.h>
+
 #include "HC_SR04.hpp"
 #include "VoltageDividerSensor.hpp"
 #include "ProximitySensor.hpp"
 
-static Adafruit_MPU6050 mpu;
+
 static HC_SR04 hc(HC_PINS.trig, HC_PINS.echo);
 static VoltageDividerSensor voltageSensor(VOLTAGE_IN_PIN, VOLTAGE_SENSOR_MULTIPLIER);
 static ProximitySensor irSensors[] = {
@@ -19,50 +21,82 @@ static ProximitySensor irSensors[] = {
     ProximitySensor(IR_SENSORS_PINS[2], PROXIMITY_SENSOR_MIN, PROXIMITY_SENSOR_MAX),
 };
 
-void initMPU()
-{
-    if (!mpu.begin())
-    {
-        Serial.println("MPU6050 not found");
-        while (1)
-            delay(10);
-    }
+static DFRobot_QMC5883 compass(&Wire, QMC5883_ADDRESS);
+static Adafruit_MPU6050 mpu = Adafruit_MPU6050();
 
-    mpu.setAccelerometerRange(MPU6050_RANGE_16_G);
-    mpu.setGyroRange(MPU6050_RANGE_2000_DEG);
-    mpu.setFilterBandwidth(MPU6050_BAND_21_HZ);
+void scanI2C()
+{
+    Serial.println("Scanning I2C bus...");
+    for (uint8_t address = 1; address < 127; address++)
+    {
+        Wire.beginTransmission(address);
+        if (Wire.endTransmission() == 0)
+        {
+            Serial.printf("Found I2C device at address 0x%02X\n", address);
+        }
+    }
+    Serial.println("I2C scan complete.");
 }
+
+int pins[] = {34,35,36,39};
 
 void setup()
 {
-    Serial.begin(115200);
-    Wire.begin(I2C_PINS.sda, I2C_PINS.scl);
-    delay(1000);
+    // Serial.begin(115200);
+    // Wire.begin(I2C_PINS.sda, I2C_PINS.scl);
+    // delay(1000);
 
-    initMPU();
-    hc.begin();
-    voltageSensor.init();
+    // scanI2C();
+
+    // if (!compass.begin())
+    // {
+    //     Serial.println("Failed to initialize QMC5883 compass!");
+    //     while (1)
+    //         delay(10);
+    // }
+
+    // hc.begin();
+    // voltageSensor.init();
     
-    for (int i = 0; i < NUM_IR_SENSORS; ++i)
-        irSensors[i].init();
+    // for (int i = 0; i < NUM_IR_SENSORS; ++i)
+    //     irSensors[i].init();
+
+    Serial.begin(115200);
+    Serial1.begin(9600, SERIAL_8N1, 33, 32); 
 }
 
 void loop()
 {
-    sensors_event_t a, g, temp;
-    mpu.getEvent(&a, &g, &temp);
-    Serial.printf(">ax:%f\n>ay:%f\n>az:%f\n", a.acceleration.x, a.acceleration.y, a.acceleration.z);
-    Serial.printf(">gx:%f\n>gy:%f\n>gz:%f\n", g.gyro.x, g.gyro.y, g.gyro.z);
-    Serial.printf(">temp:%f\n", temp.temperature);
 
-    Serial.printf(">distance:%f\n", hc.getDistance());
+    // Serial.printf(">distance:%f\n", hc.getDistance());
 
-    Serial.printf(">voltage:%f\n", voltageSensor.getVoltage());
+    // Serial.printf(">voltage:%f\n", voltageSensor.getVoltage());
 
-    for (int i = 0; i < NUM_IR_SENSORS; ++i)
+    // for (int i = 0; i < NUM_IR_SENSORS; ++i)
+    // {
+    //     Serial.printf(">ir_sensor_%d:%f\n", i, irSensors[i].getValue());
+    // }
+
+    sVector_t mag = compass.readRaw();
+
+    float heading = atan2(mag.YAxis, mag.XAxis) * (180 / 3.14159265) + 180;
+    if (heading < 0)
+        heading += 360;
+    
+    if (heading > 360)
+        heading -= 360;
+    Serial.printf(">heading:%f\n", heading);
+
+    if (Serial.available())
     {
-        Serial.printf(">ir_sensor_%d:%f\n", i, irSensors[i].getValue());
+        char c = Serial.read();
+        Serial1.write(c);
     }
 
-    delay(100);
+    if (Serial1.available())
+    {
+        char c = Serial1.read();
+        Serial.write(c);
+    }
+    delay(10);
 }

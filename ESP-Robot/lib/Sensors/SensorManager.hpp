@@ -19,7 +19,7 @@ public:
     void sendPayload();
 
     void print();
-    void printForTeleplot();
+    void print(PayloadSensors const& payload);
 
 private:
     SensorManager() = default;

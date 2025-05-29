@@ -2,6 +2,7 @@
 
 #include "pins.hpp"
 #include "constants.hpp"
+#include "printmac.hpp"
 
 #include <EspNowClient.hpp>
 #include <Payloads/PayloadTraits.hpp>
@@ -125,6 +126,7 @@ void setupEspNow()
     client.registerPayloadHandler<PayloadMoveCommand>(
         [](PayloadMoveCommand const& payload)
         {
+            Serial.printf("Received move command: %s by %f\n", payload.isRotation ? "rotate" : "move", payload.value);
             if (payload.isRotation)
             {
                 platform.turn(payload.value);
@@ -139,6 +141,9 @@ void setupEspNow()
     client.registerPayloadHandler<PayloadMotorConfig>(
         [](PayloadMotorConfig const& payload)
         {
+            Serial.printf("Received motor config command: speed: %d\tacceleration:%d\tcurrent:%d\n",
+                payload.speed, payload.acceleration, payload.current);
+
             platform.setMaxSpeed(payload.speed);
             platform.setAcceleration(payload.acceleration);
             platform.setDriverCurrent(payload.current);
@@ -177,6 +182,7 @@ void setup()
 
                 for (auto sensor : sensors)
                     sensor->read();
+                
 
                 delay(period_ms);
             }
@@ -189,12 +195,14 @@ void setup()
             while (true)
             {
                 delay(100);
-                // SensorManager::instance().printForTeleplot();
-                Serial.println(driverL.rms_current());
+                
+                SensorManager::instance().sendPayload();
             }
         },
         "Sensor raport", 8192, NULL, 1, NULL, 1
     );
+
+    printMacAddress();
 
     Serial.println("Robot Setup Complete");
 }

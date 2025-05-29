@@ -1,8 +1,10 @@
 #include <Arduino.h>
 
 #include "constants.hpp"
+#include "printmac.hpp"
 
 #include <EspNowClient.hpp>
+#include <SensorManager.hpp>
 
 static constexpr bool ROTATION = true;
 static constexpr bool FORWARD  = false;
@@ -29,17 +31,26 @@ void sendMotorConf()
     EspNowClient::instance().sendMessage(motorConfig);
 }
 
-
-void setup()
+void setupClient()
 {
-    Serial.begin(115200);
-
     auto& client = EspNowClient::instance();
 
     client.begin();
     client.addPeer(ROBOT_MAC_ADDR);
 
+    client.registerPayloadHandler<PayloadSensors>([](PayloadSensors const& payload) {
+        SensorManager::instance().print(payload);
+    });
+}
+
+
+void setup()
+{
+    Serial.begin(115200);
+
+    setupClient();
     sendMotorConf();
+    printMacAddress();
 
     Serial.println("Base Station Setup Complete");
 }
