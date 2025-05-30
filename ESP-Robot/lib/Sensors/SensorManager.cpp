@@ -4,12 +4,12 @@
 
 void SensorManager::sendPayload()
 {
-    EspNowClient::instance().sendMessage(payloadSensors);
+    EspNowClient::instance().sendMessage(instance().payloadSensors);
 }
 
 void SensorManager::print()
 {
-    print(this->payloadSensors);
+    print(instance().payloadSensors);
 }
 
 void SensorManager::print(PayloadSensors const& payload)

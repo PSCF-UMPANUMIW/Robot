@@ -12,14 +12,14 @@ public:
         return instance;
     }
 
-    PayloadSensors::ReadingsRaw& getRaw() { return payloadSensors.raw; }
+    static PayloadSensors::ReadingsRaw& getRaw() { return instance().payloadSensors.raw; }
 
-    PayloadSensors::ReadingsConverted& getConverted() { return payloadSensors.converted; }
+    static PayloadSensors::ReadingsConverted& getConverted() { return instance().payloadSensors.converted; }
 
-    void sendPayload();
+    static void sendPayload();
 
-    void print();
-    void print(PayloadSensors const& payload);
+    static void print();
+    static void print(PayloadSensors const& payload);
 
 private:
     SensorManager() = default;

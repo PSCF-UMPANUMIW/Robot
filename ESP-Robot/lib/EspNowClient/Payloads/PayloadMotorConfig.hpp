@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstdint>
-#include "../../WheelPlatform/SettingsLevel.hpp"
+#include <MotorSettingsLevel.hpp>
 
 struct PayloadMotorConfig
 {

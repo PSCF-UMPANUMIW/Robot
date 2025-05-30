@@ -1,7 +1,7 @@
 #pragma once
 
 #include <ManagedStepper.hpp>
-#include <SettingsLevel.hpp>
+#include <MotorSettingsLevel.hpp>
 
 class WheelPlatform
 {

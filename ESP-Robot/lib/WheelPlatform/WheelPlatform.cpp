@@ -102,7 +102,7 @@ void WheelPlatform::move(float distance)
 
 void WheelPlatform::turn(float angle)
 {
-    const float wheelDistance = wheelbase * angle / 2;
+    const float wheelDistance = wheelbase / 2.0 * angle;
 
     stepperL.move(wheelDistance);
     stepperR.move(-wheelDistance);

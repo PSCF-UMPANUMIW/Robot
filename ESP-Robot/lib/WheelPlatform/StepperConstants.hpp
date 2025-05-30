@@ -13,6 +13,6 @@ constexpr float ACCELERATION_MEDIUM = 0.4f;
 constexpr float ACCELERATION_HIGH   = 0.8f;
 
 // current limits in mA
-constexpr uint16_t CURRENT_LOW    = 400; // set 400 measures 718
+constexpr uint16_t CURRENT_LOW    = 600;
 constexpr uint16_t CURRENT_MEDIUM = 1000;
 constexpr uint16_t CURRENT_HIGH   = 1400;

@@ -5,7 +5,8 @@
 #include "printmac.hpp"
 
 #include <EspNowClient.hpp>
-#include <Payloads/PayloadTraits.hpp>
+#include <Payloads/PayloadMoveCommand.hpp>
+#include <Payloads/PayloadMotorConfig.hpp>
 
 #include <LidarReader.hpp>
 #include <LidarMeasurementBuffer.hpp>
@@ -99,6 +100,8 @@ void setupLidar()
 
 void setupMotors()
 {
+    Serial2.begin(115200, SERIAL_8N1, TMC_SERIAL_PINS.rx, TMC_SERIAL_PINS.tx);
+
     driverL.begin();
     driverR.begin();
 
@@ -183,45 +186,33 @@ void setup()
         [] (void*) {
             while (true)
             {
-                constexpr int period_ms = 20;
+                constexpr int period_ms = 25;
+
+                auto start = millis();
 
                 for (auto sensor : sensors)
                     sensor->read();
-                
 
-                delay(period_ms);
+                auto elapsed = millis() - start;
+                
+                delay(period_ms - elapsed);
             }
         },
         "Sensor data collection", 8192, NULL, 2, NULL, 0
     );
 
-    // xTaskCreatePinnedToCore(
-    //     [] (void*) {
-    //         while (true)
-    //         {
-    //             delay(100);
-                
-    //             SensorManager::instance().sendPayload();
-    //         }
-    //     },
-    //     "Sensor raport", 8192, NULL, 1, NULL, 1
-    // );
-
     xTaskCreatePinnedToCore(
         [] (void*) {
             while (true)
             {
-                delay(500);
+                delay(100);
                 
-                Serial.printf("currents: %i %i\n", driverL.rms_current(), driverR.rms_current());
-                Serial.printf("microsteps: %i %i\n\n", driverL.microsteps(), driverR.microsteps());
+                SensorManager::instance().sendPayload();
             }
         },
-        "Motor raport", 8192, NULL, 1, NULL, 1
+        "Sensor raport", 8192, NULL, 1, NULL, 1
     );
 
-
-    printMacAddress();
 
     Serial.println("Robot Setup Complete");
 }

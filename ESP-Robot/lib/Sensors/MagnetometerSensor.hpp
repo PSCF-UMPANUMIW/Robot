@@ -53,9 +53,11 @@ public:
             heading += 2 * PI;
         heading = fmod(heading + 2 * PI, 2 * PI); // normalize to [0, 2*PI]
         
-        updateWithExpFilter(converted.heading_rad, heading, 0.15f);
+        updateWithExpFilter(converted.heading_rad, heading, EXP_ALPHA);
     }
 
 private:
+    static constexpr float EXP_ALPHA = 0.15f;
+
     float offsets[3];
 };

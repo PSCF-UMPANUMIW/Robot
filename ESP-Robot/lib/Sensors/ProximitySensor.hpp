@@ -20,8 +20,8 @@ public:
 
     void read() override
     {
-        digitalWrite(pinTrig, LOW);
-        delayMicroseconds(2);
+        // digitalWrite(pinTrig, LOW);
+        // delayMicroseconds(2);
         digitalWrite(pinTrig, HIGH);
         delayMicroseconds(10);
         digitalWrite(pinTrig, LOW);

@@ -29,25 +29,33 @@ constexpr i2c_pins_t I2C_PINS = {
 
 // ====================================================
 
+struct tmc_serial_pins_t
+{
+    uint8_t rx, tx;
+};
+
+constexpr tmc_serial_pins_t TMC_SERIAL_PINS = {
+    .rx = 13,
+    .tx = 27
+};
+
+// ====================================================
+
 struct stepper_pins_t
 {
-    uint8_t step, dir, enable, rx, tx;
+    uint8_t step, dir, enable;
 };
 
 constexpr stepper_pins_t STEPPER_L_PINS= {
     .step = 26,
     .dir = 25,
-    .enable = 14,
-    .rx = 13,
-    .tx = 27
+    .enable = 14
 };
 
 constexpr stepper_pins_t STEPPER_R_PINS= {
     .step = 4,
     .dir = 15,
-    .enable = 14,
-    .rx = 13,
-    .tx = 27
+    .enable = 14
 };
 
 // ====================================================

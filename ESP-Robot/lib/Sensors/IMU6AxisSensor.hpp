@@ -46,7 +46,7 @@ public:
         float az = converted.acceleration_m_per_s2[2];
         float gx = converted.gyro_rad_per_s[0];
         float gy = converted.gyro_rad_per_s[1];
-        // float gz = converted.gyro_rad_per_s[2];
+        float gz = converted.gyro_rad_per_s[2];
 
         const uint32_t now = millis();
         const float dt = (now - lastTime) / 1000.f;

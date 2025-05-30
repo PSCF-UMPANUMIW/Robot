@@ -5,7 +5,6 @@
 
 #include <unordered_map>
 
-#include <Payloads/PacketID.hpp>
 #include <Payloads/PayloadTraits.hpp>
 #include <EspNowSizeLimits.hpp>
 
@@ -41,12 +40,12 @@ public:
     template<typename TPacket>
     void registerPayloadHandler(std::function<void(TPacket const& packet)> handler)
     {
-        auto newHandler = [handler](const void* rawData) {
+        auto typelessHandler = [handler](const void* rawData) {
             handler(*reinterpret_cast<const TPacket*>(rawData));
         };
         
         PacketID packetType = PayloadTraits<TPacket>::packetType;
-        instance().handlers[packetType] = newHandler;
+        handlers[packetType] = typelessHandler;
     }
 
 private:

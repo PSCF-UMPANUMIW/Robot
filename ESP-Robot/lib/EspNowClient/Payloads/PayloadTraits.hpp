@@ -1,11 +1,12 @@
 #pragma once
 
-#include "PacketID.hpp"
-#include "PayloadLidar.hpp"
-#include "PayloadLog.hpp"
-#include "PayloadSensors.hpp"
-#include "PayloadMoveCommand.hpp"
-#include "PayloadMotorConfig.hpp"
+#include <Payloads/PacketID.hpp>
+
+struct PayloadLidar;
+struct PayloadLog;
+struct PayloadSensors;
+struct PayloadMoveCommand;
+struct PayloadMotorConfig;
 
 
 template<typename PayloadType>
