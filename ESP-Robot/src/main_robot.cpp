@@ -93,14 +93,19 @@ void setupLidar()
 
     lidarReader.begin();
     lidarReader.setDataReadyCallback(lidarCallback);
-    lidarReader.enableLaser();
-    lidarReader.setMotorSpeed(LidarReader::MotorSpeed::LOW_SPEED);
+    // lidarReader.enableLaser();
+    // lidarReader.setMotorSpeed(LidarReader::MotorSpeed::LOW_SPEED);
 }
 
 void setupMotors()
 {
     driverL.begin();
     driverR.begin();
+
+    delay(1000);
+
+    driverL.mstep_reg_select(true);
+    driverR.mstep_reg_select(true);
 
     driverL.microsteps(0);
     driverR.microsteps(0);
@@ -190,17 +195,31 @@ void setup()
         "Sensor data collection", 8192, NULL, 2, NULL, 0
     );
 
+    // xTaskCreatePinnedToCore(
+    //     [] (void*) {
+    //         while (true)
+    //         {
+    //             delay(100);
+                
+    //             SensorManager::instance().sendPayload();
+    //         }
+    //     },
+    //     "Sensor raport", 8192, NULL, 1, NULL, 1
+    // );
+
     xTaskCreatePinnedToCore(
         [] (void*) {
             while (true)
             {
-                delay(100);
+                delay(500);
                 
-                SensorManager::instance().sendPayload();
+                Serial.printf("currents: %i %i\n", driverL.rms_current(), driverR.rms_current());
+                Serial.printf("microsteps: %i %i\n\n", driverL.microsteps(), driverR.microsteps());
             }
         },
-        "Sensor raport", 8192, NULL, 1, NULL, 1
+        "Motor raport", 8192, NULL, 1, NULL, 1
     );
+
 
     printMacAddress();
 
