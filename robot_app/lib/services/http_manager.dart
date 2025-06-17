@@ -5,6 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class HTTPManager {
   static final HTTPManager _instance = HTTPManager._internal();
 
+  static final int port = 5000;
+
   // Singleton pattern
   factory HTTPManager() {
     return _instance;
@@ -13,7 +15,7 @@ class HTTPManager {
   HTTPManager._internal();
 
   // Default server address
-  String _serverIP = 'http://localhost:8080';
+  String _serverIP = 'localhost';
 
   // Get the current server IP
   String get serverIP => _serverIP;
@@ -26,7 +28,7 @@ class HTTPManager {
 
   // Update the server IP address
   Future<void> setServerIP(String ip) async {
-    _serverIP = ip.startsWith('http') ? ip : 'http://$ip';
+    _serverIP = ip.startsWith('http') ? ip : 'http://$ip:$port';
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('server_ip', _serverIP);
   }

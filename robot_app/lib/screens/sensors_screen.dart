@@ -4,7 +4,7 @@ import 'package:robot_app/services/http_manager.dart';
 import 'package:robot_app/models/sensor_data.dart';
 
 class SensorsScreen extends StatefulWidget {
-  const SensorsScreen({Key? key}) : super(key: key);
+  const SensorsScreen({super.key});
 
   @override
   _SensorsScreenState createState() => _SensorsScreenState();

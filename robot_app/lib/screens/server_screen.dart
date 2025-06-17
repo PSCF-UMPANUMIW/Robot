@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:robot_app/services/http_manager.dart';
 
 class ServerScreen extends StatefulWidget {
-  const ServerScreen({Key? key}) : super(key: key);
+  const ServerScreen({super.key});
 
   @override
   _ServerScreenState createState() => _ServerScreenState();

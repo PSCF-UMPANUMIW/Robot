@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:robot_app/services/http_manager.dart';
 
 class ControlScreen extends StatefulWidget {
-  const ControlScreen({Key? key}) : super(key: key);
+  const ControlScreen({super.key});
 
   @override
   _ControlScreenState createState() => _ControlScreenState();
@@ -256,7 +256,7 @@ class _ControlScreenState extends State<ControlScreen> {
               width: buttonSize - 20,
               height: buttonSize - 20,
               decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.3),
+                color: Colors.grey,
                 shape: BoxShape.circle,
               ),
               child: const Center(
