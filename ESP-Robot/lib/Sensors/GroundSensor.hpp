@@ -16,9 +16,6 @@ public:
 
     GroundSensor(Position position, uint8_t pin, uint16_t min, uint16_t max)
         : position(position), pin(pin), min(min), max(max)
-    {}
-
-    void begin() override
     {
         pinMode(pin, INPUT);
     }

@@ -9,9 +9,6 @@ class ProximitySensor : public ISensor
 public:
     ProximitySensor(uint8_t pinTrig, uint8_t pinEcho, float maxDistance)
         : pinTrig(pinTrig), pinEcho(pinEcho), maxDistance(maxDistance)
-    {}
-
-    void begin() override
     {
         pinMode(pinTrig, OUTPUT);
         pinMode(pinEcho, INPUT);

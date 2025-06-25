@@ -2,7 +2,6 @@
 
 #include "pins.hpp"
 #include "constants.hpp"
-#include "printmac.hpp"
 
 #include <EspNowClient.hpp>
 #include <Payloads/PayloadMoveCommand.hpp>
@@ -24,105 +23,60 @@
 #include <ManagedStepper.hpp>
 #include <WheelPlatform.hpp>
 
-#pragma region lidar
 
-static LidarReader lidarReader(
-    SERIAL_LIDAR,
-    LIDAR_PINS.data,
-    LIDAR_PINS.enable,
-    LIDAR_PINS.motor_enable
-);
+static LidarReader* lidarReader;
+static ISensor* sensors[NUM_SENSORS] {};
+static WheelPlatform* platform;
 
-#pragma endregion
-
-#pragma region sensors
-
-static GroundSensor  groundSensorLeft(GroundSensor::Position::LEFT,  IR_SENSOR_PINS[0].analog_in, 0, 4095);
-static GroundSensor groundSensorFront(GroundSensor::Position::FRONT, IR_SENSOR_PINS[1].analog_in, 0, 4095);
-static GroundSensor groundSensorRight(GroundSensor::Position::RIGHT, IR_SENSOR_PINS[2].analog_in, 0, 4095);
-
-static ProximitySensor proximitySensor(HC_SR04_PINS.trig, HC_SR04_PINS.echo, 1.f);
-
-static VoltageSensor voltageSensor(VOLTAGE_SENSOR_PINS.analog_in, -6.841e-7f, 7.923e-3f, -2.629f);
-
-static IMU6AxisSensor imu(Wire);
-
-static MagnetometerSensor magnetometer(Wire, 
-    MagnetometerSensor::Calibration{
-        .xmin = 0.248f,
-        .xmax = 0.672f,
-        .ymin = -0.203f,
-        .ymax = 0.210f,
-        .zmin = 0.0f,
-        .zmax = 0.0f
-    }
-);
-
-static ISensor* sensors[] = {
-    &groundSensorLeft,
-    &groundSensorFront,
-    &groundSensorRight,
-    &proximitySensor,
-    &voltageSensor,
-    &imu,
-    &magnetometer
-};
-
-#pragma endregion
-
-#pragma region motors
-
-static TMC2209Stepper driverL(&SERIAL_TMC, TMC_R_SENSE, 0b00);
-static TMC2209Stepper driverR(&SERIAL_TMC, TMC_R_SENSE, 0b01);
-
-static AccelStepper stepperL(AccelStepper::DRIVER, STEPPER_L_PINS.step, STEPPER_L_PINS.dir);
-static AccelStepper stepperR(AccelStepper::DRIVER, STEPPER_R_PINS.step, STEPPER_R_PINS.dir);
-
-static ManagedStepper managedStepperL(stepperL, driverL, ROBOT_STEPS_PER_METER);
-static ManagedStepper managedStepperR(stepperR, driverR, ROBOT_STEPS_PER_METER);
-
-static WheelPlatform platform(managedStepperL, managedStepperR, 0.284f);
-
-#pragma endregion
 
 void setupLidar()
 {
+    lidarReader = new LidarReader(SERIAL_LIDAR, LIDAR_PINS.data, LIDAR_PINS.enable, LIDAR_PINS.motor_enable);
+
     auto lidarCallback = [](LidarMeasurement const& m) {
         static LidarMeasurementBuffer buffer;
         buffer.add(m);
     };
 
-    lidarReader.begin();
-    lidarReader.setDataReadyCallback(lidarCallback);
-    // lidarReader.enableLaser();
-    // lidarReader.setMotorSpeed(LidarReader::MotorSpeed::LOW_SPEED);
+    lidarReader->begin();
+    lidarReader->setDataReadyCallback(lidarCallback);
+    lidarReader->enableLaser();
+    lidarReader->setMotorSpeed(LidarReader::MotorSpeed::LOW_SPEED);
 }
 
 void setupMotors()
 {
     Serial2.begin(115200, SERIAL_8N1, TMC_SERIAL_PINS.rx, TMC_SERIAL_PINS.tx);
 
-    driverL.begin();
-    driverR.begin();
+    TMC2209Stepper* driverL = new TMC2209Stepper(&SERIAL_TMC, TMC_R_SENSE, 0b00);
+    TMC2209Stepper* driverR = new TMC2209Stepper(&SERIAL_TMC, TMC_R_SENSE, 0b01);
 
-    delay(1000);
+    driverL->begin();
+    driverR->begin();
 
-    driverL.mstep_reg_select(true);
-    driverR.mstep_reg_select(true);
+    driverL->mstep_reg_select(true);
+    driverR->mstep_reg_select(true);
 
-    driverL.microsteps(0);
-    driverR.microsteps(0);
+    driverL->microsteps(0);
+    driverR->microsteps(0);
 
-    stepperL.setEnablePin(STEPPER_L_PINS.enable);
-    stepperR.setEnablePin(STEPPER_L_PINS.enable);
+    AccelStepper* stepperL = new AccelStepper(AccelStepper::DRIVER, STEPPER_L_PINS.step, STEPPER_L_PINS.dir);
+    AccelStepper* stepperR = new AccelStepper(AccelStepper::DRIVER, STEPPER_R_PINS.step, STEPPER_R_PINS.dir);
 
-    stepperL.setPinsInverted(false, false, true);
-    stepperR.setPinsInverted(true, false, true);
+    stepperL->setEnablePin(STEPPER_L_PINS.enable);
+    stepperR->setEnablePin(STEPPER_L_PINS.enable);
 
-    stepperL.setCurrentPosition(0);
-    stepperR.setCurrentPosition(0);
+    stepperL->setPinsInverted(false, false, true);
+    stepperR->setPinsInverted(true, false, true);
 
-    platform.begin();
+    stepperL->setCurrentPosition(0);
+    stepperR->setCurrentPosition(0);
+
+    ManagedStepper* managedStepperL = new ManagedStepper(*stepperL, *driverL, ROBOT_STEPS_PER_METER);
+    ManagedStepper* managedStepperR = new ManagedStepper(*stepperR, *driverR, ROBOT_STEPS_PER_METER);
+
+    platform = new WheelPlatform(*managedStepperL, *managedStepperR, ROBOT_WHEELBASE);
+    platform->begin();
 }
 
 void setupEspNow()
@@ -136,13 +90,9 @@ void setupEspNow()
         {
             Serial.printf("Received move command: %s by %f\n", payload.isRotation ? "rotate" : "move", payload.value);
             if (payload.isRotation)
-            {
-                platform.turn(payload.value);
-            }
+                platform->turn(payload.value);
             else
-            {
-                platform.move(payload.value);
-            }
+                platform->move(payload.value);
         }
     );
 
@@ -152,36 +102,31 @@ void setupEspNow()
             Serial.printf("Received motor config command: speed: %d\tacceleration:%d\tcurrent:%d\n",
                 payload.speed, payload.acceleration, payload.current);
 
-            platform.setMaxSpeed(payload.speed);
-            platform.setAcceleration(payload.acceleration);
-            platform.setDriverCurrent(payload.current);
+            platform->setMaxSpeed(payload.speed);
+            platform->setAcceleration(payload.acceleration);
+            platform->setDriverCurrent(payload.current);
 
             if (payload.enableSteppers)
-                platform.enableSteppers();
+                platform->enableSteppers();
             else
-                platform.disableSteppers();
+                platform->disableSteppers();
         }
     );
 }
 
 void setupSensors()
 {
-    for (auto sensor : sensors)
-        sensor->begin();
+    sensors[0] = new GroundSensor(GroundSensor::Position::LEFT,  IR_SENSOR_PINS[0].analog_in, 0, 4095);
+    sensors[1] = new GroundSensor(GroundSensor::Position::FRONT, IR_SENSOR_PINS[1].analog_in, 0, 4095);
+    sensors[2] = new GroundSensor(GroundSensor::Position::RIGHT, IR_SENSOR_PINS[2].analog_in, 0, 4095);
+    sensors[3] = new ProximitySensor(HC_SR04_PINS.trig, HC_SR04_PINS.echo, 1.f);
+    sensors[4] = new VoltageSensor(VOLTAGE_SENSOR_PINS.analog_in, -6.841e-7f, 7.923e-3f, -2.629f);
+    sensors[5] = new IMU6AxisSensor(Wire, 0x68);
+    sensors[6] = new MagnetometerSensor(Wire, MagnetometerSensor::Calibration{ 0.248f, 0.672f, -0.203f, 0.210f, 0.0f, 0.0f});
 }
 
-void setup()
+void createSensorReadTask()
 {
-    Serial.begin(115200);
-    
-    setupEspNow();
-    setupMotors();
-    setupLidar();
-
-    Wire.begin(I2C_PINS.sda, I2C_PINS.scl);
-
-    setupSensors();
-
     xTaskCreatePinnedToCore(
         [] (void*) {
             while (true)
@@ -200,30 +145,41 @@ void setup()
         },
         "Sensor data collection", 8192, NULL, 2, NULL, 0
     );
+}
 
+void createSensorSendTask()
+{
     xTaskCreatePinnedToCore(
         [] (void*) {
             while (true)
             {
                 delay(100);
-                
                 SensorManager::instance().sendPayload();
             }
         },
-        "Sensor raport", 8192, NULL, 1, NULL, 1
+        "Sensor send task", 8192, NULL, 1, NULL, 1
     );
+}
 
+void setup()
+{
+    Serial.begin(115200);
+    Wire.begin(I2C_PINS.sda, I2C_PINS.scl);
+    
+    setupEspNow();
+    setupMotors();
+    setupLidar();
+    setupSensors();
+
+    createSensorReadTask();
+    createSensorSendTask();
 
     Serial.println("Robot Setup Complete");
 }
 
 
-
 void loop()
 {
-    lidarReader.readData();
-
-    platform.run();
+    lidarReader->readData();
+    platform->run();
 }
-
-

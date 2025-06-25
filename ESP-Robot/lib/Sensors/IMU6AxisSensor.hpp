@@ -9,11 +9,8 @@
 class IMU6AxisSensor : public ISensor, public I2CDevice
 {
 public:
-    IMU6AxisSensor(TwoWire& wire, uint8_t address = 0x68)
+    IMU6AxisSensor(TwoWire& wire, uint8_t address)
         : I2CDevice(wire, address)
-    {}
-
-    void begin() override
     {
         setByte(PWR_MGMT_1_REG,   0b00000000); // enable MPU
         setByte(GYRO_CONFIG_REG,  0b00010000); // scale to 1000deg/s

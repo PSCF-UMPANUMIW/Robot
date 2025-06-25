@@ -9,6 +9,8 @@ constexpr uint8_t BROADCAST_MAC_ADDR[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 HardwareSerial& SERIAL_LIDAR = Serial1;
 HardwareSerial& SERIAL_TMC   = Serial2;
 
+constexpr int NUM_SENSORS = 7;
+
 constexpr float TMC_R_SENSE = 0.11f;
 
 constexpr float ROBOT_WHEELBASE = 0.284f;

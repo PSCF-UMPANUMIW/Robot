@@ -13,12 +13,12 @@ class EspNowClient
 public:
     static EspNowClient& instance();
 
-    void begin();
+    static void begin();
 
-    void addPeer(const byte* peerMacAddr);
+    static void addPeer(const byte* peerMacAddr);
 
     template<typename PayloadType>
-    void sendMessage(PayloadType const& payload)
+    static void sendMessage(PayloadType const& payload)
     {
         constexpr PacketID ID = PayloadTraits<PayloadType>::packetType;
 
@@ -38,14 +38,14 @@ public:
     }
 
     template<typename TPacket>
-    void registerPayloadHandler(std::function<void(TPacket const& packet)> handler)
+    static void registerPayloadHandler(std::function<void(TPacket const& packet)> handler)
     {
         auto typelessHandler = [handler](const void* rawData) {
             handler(*reinterpret_cast<const TPacket*>(rawData));
         };
         
         PacketID packetType = PayloadTraits<TPacket>::packetType;
-        handlers[packetType] = typelessHandler;
+        instance().handlers[packetType] = typelessHandler;
     }
 
 private:

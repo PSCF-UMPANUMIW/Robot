@@ -9,9 +9,6 @@ class VoltageSensor : public ISensor
 public:
     VoltageSensor(uint8_t pin, float fitA, float fitB, float fitC)
         : pin(pin), a(fitA), b(fitB), c(fitC)
-    {}
-
-    void begin() override
     {
         pinMode(pin, INPUT);
     }

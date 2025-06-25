@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../EspNowClient/Payloads/PayloadSensors.hpp"
+#include <Payloads/PayloadSensors.hpp>
 class EspNowClient;
 
 class SensorManager
@@ -30,5 +30,5 @@ private:
     SensorManager& operator=(const SensorManager&) = delete;
     SensorManager& operator=(SensorManager&&) = delete;
 
-    PayloadSensors payloadSensors;
+    PayloadSensors payloadSensors {};
 };

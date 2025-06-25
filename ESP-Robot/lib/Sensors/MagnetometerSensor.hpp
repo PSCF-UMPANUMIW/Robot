@@ -20,16 +20,13 @@ public:
     MagnetometerSensor(TwoWire& wire, Calibration cali, uint8_t address = 0x0D)
         : I2CDevice(wire, address)
     {
-        offsets[0] = (cali.xmax + cali.xmin) / 2;
-        offsets[1] = (cali.ymax + cali.ymin) / 2;
-        offsets[2] = (cali.zmax + cali.zmin) / 2;
-    }
-
-    void begin() override
-    {
         setByte(0x0B, 0x01);       // recommended value
         setByte(0x09, 0b00011001); // oversamling 512, 8G range, 100Hz, continuous mode
         setByte(0x0A, 0x00);       // default settings
+
+        offsets[0] = (cali.xmax + cali.xmin) / 2;
+        offsets[1] = (cali.ymax + cali.ymin) / 2;
+        offsets[2] = (cali.zmax + cali.zmin) / 2;
     }
 
     void read() override
