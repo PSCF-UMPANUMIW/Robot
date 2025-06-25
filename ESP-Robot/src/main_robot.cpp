@@ -46,7 +46,7 @@ void setupLidar()
 
 void setupMotors()
 {
-    Serial2.begin(115200, SERIAL_8N1, TMC_SERIAL_PINS.rx, TMC_SERIAL_PINS.tx);
+    SERIAL_TMC.begin(115200, SERIAL_8N1, TMC_SERIAL_PINS.rx, TMC_SERIAL_PINS.tx);
 
     TMC2209Stepper* driverL = new TMC2209Stepper(&SERIAL_TMC, TMC_R_SENSE, 0b00);
     TMC2209Stepper* driverR = new TMC2209Stepper(&SERIAL_TMC, TMC_R_SENSE, 0b01);
