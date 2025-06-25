@@ -21,7 +21,7 @@ Project for two courses during the 6th semester of the Informatics major on the 
 
 ![Robot photo 1](images/robot_photo.png)
 ![Robot LIDAR showcase](images/robot_lidar.png)
-![App main screen](images/app.png")
+![App main screen](images/app.png)
 
 ---
 
