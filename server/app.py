@@ -15,7 +15,7 @@ sensors_data = {}
 
 @app.route('/health', methods=['GET'])
 def health():
-    return jsonify({"status": "healthy", "message": "Robot Mock Server is running"}), 200
+    return jsonify({"status": "healthy", "message": "Robot Server is running"}), 200
 
 
 @app.route('/sensors', methods=['GET'])

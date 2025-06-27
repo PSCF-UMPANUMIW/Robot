@@ -36,31 +36,19 @@ The focus of this project is to design and build a modular AGV (Automated Guided
 
 The project is organized into several modules, each serving a specific purpose:
 
-- `ESP-Robot`
-  PlatformIO project for the ESP32 robot and base station controller
+- [**ESP-Robot**](ESP-Robot/README.md)  
+  PlatformIO project for the ESP32 robot and base station controller.
 
-- `LIDAR-Vis`
+- [**LIDAR-Vis**](LIDAR-Vis/README.md)  
   Python-based visualization tool for rendering LiDAR scan data in real time.
 
-- `server`
-  A lightweight server for local API
+- [**server**](server/README.md)  
+  A lightweight server for the local API.
 
-- `robot_app`  
-  Cross-platform application for client device
+- [**robot_app**](robot_app/README.md)  
+  Cross-platform application for the client device.
 
 For detailed documentation on each module, please refer to the respective README.md files in the `/ESP-Robot`, `/LIDAR-Vis`, `/server` and `/robot_app` directories.
-
----
-
-## Results
-
-![Hardware diagram](images/hardware_diagram.jpg)
-
-![Robot photo 1](images/robot_photo.png)
-
-![Robot LIDAR showcase](images/robot_lidar.png)
-
-![App main screen](images/app.png)
 
 ---
 
@@ -87,6 +75,27 @@ The project uses the following technologies:
 - [Karol Orszulik](https://github.com/KarolOrszulik)
 - [Karol Gryc](https://github.com/KarolGryc)
 - [Krzysztof Witek](https://github.com/krzsztfwtk)
+
+---
+
+## Results
+
+### Developed prototype
+
+![Robot photo 1](images/robot_photo.png)
+
+### Hardware diagram
+
+![Hardware diagram](images/hardware_diagram.png)
+
+### Robot LIDAR showcase
+
+![Robot LIDAR showcase](images/robot_lidar.png)
+
+### App screenshots
+
+![App screenshots](images/app_combined.png)
+
 
 ---
 
