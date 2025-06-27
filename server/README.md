@@ -46,7 +46,6 @@ The server will start on port 5000.
     "pitch": -1.2,
     "heading": 36.5,
     "lidar_speed": 182.4,
-    ...
   }
   ```
 
@@ -92,7 +91,7 @@ The server will start on port 5000.
 
 ### POST /speed
 
-- **Description:** Sets the robot's speed level. Allowed values are 0, 1 and 2 for low, medium and high repectively.
+- **Description:** Sets the robot's speed level. Allowed values are 0 (low), 1 (medium) and 2 (high).
 - **Request Body:**  
   ```json
   {
@@ -111,7 +110,7 @@ The server will start on port 5000.
 
 ### POST /acceleration
 
-- **Description:** Sets the robot's acceleration level. Allowed values are 0, 1 and 2 for low, medium and high repectively.
+- **Description:** Sets the robot's acceleration level. Allowed values are 0 (low), 1 (medium) and 2 (high).
 - **Request Body:**  
   ```json
   {
@@ -130,7 +129,7 @@ The server will start on port 5000.
 
 ### POST /current
 
-- **Description:** Sets the robot's current limit. Allowed values are 0, 1 and 2 for low, medium and high repectively.
+- **Description:** Sets the robot's current limit. Allowed values are 0 (low), 1 (medium) and 2 (high).
 - **Request Body:**  
   ```json
   {
@@ -141,7 +140,7 @@ The server will start on port 5000.
   ```json
   {
     "status": "success",
-    "message": "Current command with level 3 received"
+    "message": "Current command with level 0 received"
   }
   ```
 
@@ -149,7 +148,7 @@ The server will start on port 5000.
 
 ### POST /lidar
 
-- **Description:** Sets the LIDAR speed level. Allowed values are 0, 1, 2 and 3 for off, slow, fast and max repectively.
+- **Description:** Sets the LIDAR speed level. Allowed values are 0 (off), 1 (slow), 2 (fast) and 3 (max).
 > [!WARNING]
 > The lidar is incabaple of measurement in the "max" mode.
 - **Request Body:**  
@@ -162,7 +161,7 @@ The server will start on port 5000.
   ```json
   {
     "status": "success",
-    "message": "Lidar command with level 180 received"
+    "message": "Lidar command with level 3 received"
   }
   ```
 
