@@ -9,8 +9,6 @@
 
 #include <SensorManager.hpp>
 
-static constexpr bool ROTATION = true;
-static constexpr bool FORWARD  = false;
 
 static PayloadMotorConfig motorConfig {
     .speed = SettingsLevel::LEVEL_LOW,
@@ -19,10 +17,16 @@ static PayloadMotorConfig motorConfig {
     .enableSteppers = true
 };
 
-void sendMove(bool isRotation, float value)
+enum class MoveType : bool
+{
+    LINEAR = false,
+    ROTATION = true,
+};
+
+void sendMove(MoveType type, float value)
 {
     PayloadMoveCommand comm {
-        .isRotation = isRotation,
+        .isRotation = static_cast<bool>(type),
         .value = value
     };
 
@@ -40,10 +44,11 @@ void setupClient()
     EspNowClient::addPeer(ROBOT_MAC_ADDR);
 
     EspNowClient::registerPayloadHandler<PayloadSensors>([](PayloadSensors const& payload) {
-        SensorManager::instance().print(payload);
+        SensorManager::print(payload);
     });
 }
 
+void serialHandler();
 
 void setup()
 {
@@ -52,88 +57,36 @@ void setup()
     setupClient();
     sendMotorConf();
 
+    Serial.onReceive(serialHandler);
+
     Serial.println("Base Station Setup Complete");
 }
 
 void loop()
 {
-    if (Serial.available())
-    {
-        const char c = Serial.read();
+    // in order not to let the CPU go to waste,
+    // we will calculate PI in the spare time
 
-        while (Serial.available())
-            Serial.read();
+    static double pi = 0.0;
+    static long n = 0;
 
-        switch (c)
-        {
-            case 'e':
-                sendMove(FORWARD, 2.f);
-                break;
-            case 'w':
-                sendMove(FORWARD, 0.2f);
-                break;
-            case 's':
-                sendMove(FORWARD, -0.2f);
-                break;
-            case 'a':
-                sendMove(ROTATION, -PI/8.f);
-                break;
-            case 'd':
-                sendMove(ROTATION, PI/8.f);
-                break;
-            
-            case '1':
-                motorConfig.speed = SettingsLevel::LEVEL_LOW;
-                sendMotorConf();
-                Serial.println("Speed set to LOW");
-                break;
-            case '2':
-                motorConfig.speed = SettingsLevel::LEVEL_MEDIUM;
-                sendMotorConf();
-                Serial.println("Speed set to MEDIUM");
-                break;
-            case '3':
-                motorConfig.speed = SettingsLevel::LEVEL_HIGH;
-                sendMotorConf();
-                Serial.println("Speed set to HIGH");
-                break;
+    double term = (n % 2 == 0 ? 4.0 : -4.0) / (2 * n + 1);
+    pi += term;
+    n++;
 
-            case '4':
-                motorConfig.acceleration = SettingsLevel::LEVEL_LOW;
-                sendMotorConf();
-                Serial.println("Acceleration set to LOW");
-                break;
-            case '5':
-                motorConfig.acceleration = SettingsLevel::LEVEL_MEDIUM;
-                sendMotorConf();
-                Serial.println("Acceleration set to MEDIUM");
-                break;
-            case '6':
-                motorConfig.acceleration = SettingsLevel::LEVEL_HIGH;
-                sendMotorConf();
-                Serial.println("Acceleration set to HIGH");
-                break;
+    delay(100);
+}
 
-            case '7':
-                motorConfig.current = SettingsLevel::LEVEL_LOW;
-                sendMotorConf();
-                Serial.println("Current set to LOW");
-                break;
-            case '8':
-                motorConfig.current = SettingsLevel::LEVEL_MEDIUM;
-                sendMotorConf();
-                Serial.println("Current set to MEDIUM");
-                break;
-            case '9':
-                motorConfig.current = SettingsLevel::LEVEL_HIGH;
-                sendMotorConf();
-                Serial.println("Current set to HIGH");
-                break;
+void serialHandler()
+{
+    if (Serial.available() == 0)
+        return;
+        
+    char c = Serial.read();
+    int x = Serial.parseInt();
 
-            default:
-                return;
-        }
+    while (Serial.available())
+        Serial.read();
 
-        delay(200);
-    }
+    Serial.printf("Command: %c, Value: %d\n", c, x);
 }
