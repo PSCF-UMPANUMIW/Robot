@@ -1,25 +1,37 @@
 class SensorData {
+  final double groundSensorL;
+  final double groundSensorF;
+  final double groundSensorR;
+  final double frontSensor;
+  final double batteryVoltage;
   final double pitch;
   final double roll;
-  final double posX;
-  final double posY;
-  final double temperature;
+  final double heading;
+  final double lidarSpeed;
 
   SensorData({
+    required this.groundSensorL,
+    required this.groundSensorF,
+    required this.groundSensorR,
+    required this.frontSensor,
+    required this.batteryVoltage,
     required this.pitch,
     required this.roll,
-    required this.posX,
-    required this.posY,
-    required this.temperature,
+    required this.heading,
+    required this.lidarSpeed,
   });
 
   factory SensorData.fromJson(Map<String, dynamic> json) {
     return SensorData(
-      pitch: json['pitch']?.toDouble() ?? 0.0,
-      roll: json['roll']?.toDouble() ?? 0.0,
-      posX: json['posX']?.toDouble() ?? 0.0,
-      posY: json['posY']?.toDouble() ?? 0.0,
-      temperature: json['temperature']?.toDouble() ?? 0.0,
+      groundSensorL: (json['ground_1'] ?? 0.0).toDouble(),
+      groundSensorF: (json['ground_2'] ?? 0.0).toDouble(),
+      groundSensorR: (json['ground_0'] ?? 0.0).toDouble(),
+      frontSensor: (json['front_dist'] ?? 0.0).toDouble(),
+      batteryVoltage: (json['batt_v'] ?? 0.0).toDouble(),
+      pitch: (json['pitch'] ?? 0.0).toDouble(),
+      roll: (json['roll'] ?? 0.0).toDouble(),
+      heading: (json['heading'] ?? 0.0).toDouble(),
+      lidarSpeed: (json['lidar_speed'] ?? 0.0).toDouble(),
     );
   }
 }

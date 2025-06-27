@@ -89,49 +89,80 @@ class _SensorsScreenState extends State<SensorsScreen> {
       );
     }
 
-    // Display sensor data
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
-      child: Column(
+      child: _sensorData == null
+          ? const SizedBox.shrink()
+          : Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          _buildSensorCard(
+            title: 'Ground Sensors',
+            icon: Icons.linear_scale,
+            values: [
+              SensorValue(
+                name: 'Left',
+                value: _sensorData!.groundSensorL.toStringAsFixed(2),
+              ),
+              SensorValue(
+                name: 'Front',
+                value: _sensorData!.groundSensorF.toStringAsFixed(2),
+              ),
+              SensorValue(
+                name: 'Right',
+                value: _sensorData!.groundSensorR.toStringAsFixed(2),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _buildSensorCard(
+            title: 'Front Sensor',
+            icon: Icons.sensors,
+            values: [
+              SensorValue(
+                name: 'Front Sensor',
+                value: _sensorData!.frontSensor.toStringAsFixed(2),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _buildSensorCard(
+            title: 'Battery',
+            icon: Icons.battery_full,
+            values: [
+              SensorValue(
+                name: 'Voltage',
+                value: '${_sensorData!.batteryVoltage.toStringAsFixed(2)} V',
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
           _buildSensorCard(
             title: 'Orientation',
             icon: Icons.rotate_90_degrees_ccw,
             values: [
               SensorValue(
                 name: 'Pitch',
-                value: '${_sensorData?.pitch.toStringAsFixed(2)}°',
+                value: '${_sensorData!.pitch.toStringAsFixed(2)}°',
               ),
               SensorValue(
                 name: 'Roll',
-                value: '${_sensorData?.roll.toStringAsFixed(2)}°',
+                value: '${_sensorData!.roll.toStringAsFixed(2)}°',
+              ),
+              SensorValue(
+                name: 'Heading',
+                value: '${_sensorData!.heading.toStringAsFixed(2)}°',
               ),
             ],
           ),
           const SizedBox(height: 16),
           _buildSensorCard(
-            title: 'Position',
-            icon: Icons.gps_fixed,
+            title: 'LiDAR',
+            icon: Icons.speed,
             values: [
               SensorValue(
-                name: 'X',
-                value: '${_sensorData?.posX.toStringAsFixed(2)}',
-              ),
-              SensorValue(
-                name: 'Y',
-                value: '${_sensorData?.posY.toStringAsFixed(2)}',
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _buildSensorCard(
-            title: 'Environment',
-            icon: Icons.thermostat,
-            values: [
-              SensorValue(
-                name: 'Temperature',
-                value: '${_sensorData?.temperature.toStringAsFixed(1)}°C',
+                name: 'Speed',
+                value: '${_sensorData!.lidarSpeed.toStringAsFixed(2)}',
               ),
             ],
           ),
