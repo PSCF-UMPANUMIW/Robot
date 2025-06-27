@@ -15,7 +15,7 @@ class HTTPManager {
   HTTPManager._internal();
 
   // Default server address
-  String _serverIP = 'localhost';
+  String _serverIP = 'http://localhost:5000';
 
   // Get the current server IP
   String get serverIP => _serverIP;

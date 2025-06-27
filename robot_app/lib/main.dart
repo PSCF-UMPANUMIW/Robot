@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Navigation Demo',
+      title: 'Universal Robotic Platform',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         useMaterial3: true,

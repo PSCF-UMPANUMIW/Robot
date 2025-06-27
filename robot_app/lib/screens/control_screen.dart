@@ -8,17 +8,21 @@ class ControlScreen extends StatefulWidget {
   _ControlScreenState createState() => _ControlScreenState();
 }
 
-class _ControlScreenState extends State<ControlScreen> {
+class _ControlScreenState extends State<ControlScreen> with AutomaticKeepAliveClientMixin {
+
+  @override
+  bool get wantKeepAlive => true;
+
   final HTTPManager _httpManager = HTTPManager();
 
   // Distance options
   final List<String> _distanceOptions = ['5cm', '20cm', '1m'];
-  final List<double> _distanceValues = [5.0, 20.0, 100.0]; // in cm
+  final List<double> _distanceValues = [50.0, 200.0, 1000.0]; // in mm
   int _selectedDistanceIndex = 0;
 
   // Angle options
   final List<String> _angleOptions = ['5deg', '1/8 turn', '1/4 turn'];
-  final List<double> _angleValues = [5.0, 45.0, 90.0]; // in degrees
+  final List<double> _angleValues = [87.27, 785.4, 1571.0]; // in milliradians
   int _selectedAngleIndex = 0;
 
   bool _isMoving = false;
@@ -85,24 +89,61 @@ class _ControlScreenState extends State<ControlScreen> {
     }
   }
 
+  Widget _buildSelectButtons({
+    required String title,
+    required List<String> options,
+    required int selectedIndex,
+    required Function(int) onSelected,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: List.generate(options.length, (index) {
+            final isSelected = selectedIndex == index;
+            return Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isSelected ? Colors.blue : Colors.grey.shade200,
+                    foregroundColor: isSelected ? Colors.white : Colors.black87,
+                  ),
+                  onPressed: () {
+                    onSelected(index);
+                  },
+                  child: Text(options[index]),
+                ),
+              ),
+            );
+          }),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Control'),
-      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Distance Radio Group as Table
-              _buildTableRadioGroup(
+              // Distance Select Buttons
+              _buildSelectButtons(
                 title: 'Distance',
                 options: _distanceOptions,
                 selectedIndex: _selectedDistanceIndex,
-                onChanged: (index) {
+                onSelected: (index) {
                   setState(() {
                     _selectedDistanceIndex = index;
                   });
@@ -114,12 +155,12 @@ class _ControlScreenState extends State<ControlScreen> {
               _buildDPad(),
               const SizedBox(height: 40),
 
-              // Angle Radio Group as Table
-              _buildTableRadioGroup(
+              // Angle Select Buttons
+              _buildSelectButtons(
                 title: 'Angle',
                 options: _angleOptions,
                 selectedIndex: _selectedAngleIndex,
-                onChanged: (index) {
+                onSelected: (index) {
                   setState(() {
                     _selectedAngleIndex = index;
                   });
@@ -129,71 +170,6 @@ class _ControlScreenState extends State<ControlScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildTableRadioGroup({
-    required String title,
-    required List<String> options,
-    required int selectedIndex,
-    required Function(int) onChanged,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Table(
-            border: TableBorder(
-              horizontalInside: BorderSide(color: Colors.grey.shade300),
-              verticalInside: BorderSide(color: Colors.grey.shade300),
-            ),
-            children: [
-              TableRow(
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                ),
-                children: options.map((option) => Center(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Text(
-                      option,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                )).toList(),
-              ),
-              TableRow(
-                children: List.generate(
-                  options.length,
-                      (index) => Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Radio<int>(
-                        value: index,
-                        groupValue: selectedIndex,
-                        onChanged: (int? value) {
-                          if (value != null) {
-                            onChanged(value);
-                          }
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 

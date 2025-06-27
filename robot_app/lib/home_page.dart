@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/control_screen.dart';
 import 'screens/sensors_screen.dart';
-import 'screens/server_screen.dart';
+import 'screens/config_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -30,10 +30,14 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Flutter Navigation Demo'),
+        title: const Text('Universal Robotic Platform'),
         centerTitle: true,
       ),
-      body: _screens[_selectedIndex],
+      // Use IndexedStack to preserve screen state
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _screens,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -45,8 +49,8 @@ class _HomePageState extends State<HomePage> {
             label: 'Sensors',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.storage),
-            label: 'Server',
+            icon: Icon(Icons.settings),
+            label: 'Settings',
           ),
         ],
         currentIndex: _selectedIndex,

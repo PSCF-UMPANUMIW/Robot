@@ -120,7 +120,7 @@ def lidar():
     if not data:
         return jsonify({"error": "Invalid request data"}), 400
     
-    lidarSpeed = int(data.get('speed'))
+    lidarSpeed = int(data.get('level'))
 
     if lidarSpeed is None:
         return jsonify({"error": "Missing command parameter"}), 400
