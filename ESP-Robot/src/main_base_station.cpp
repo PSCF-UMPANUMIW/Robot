@@ -9,6 +9,8 @@
 
 #include <SensorManager.hpp>
 
+HardwareSerial& Server = Serial1;
+HardwareSerial& Debug = Serial;
 
 static PayloadMotorConfig motorConfig {
     .speed = SettingsLevel::LEVEL_LOW,
@@ -44,7 +46,7 @@ void setupClient()
     EspNowClient::addPeer(ROBOT_MAC_ADDR);
 
     EspNowClient::registerPayloadHandler<PayloadSensors>([](PayloadSensors const& payload) {
-        SensorManager::print(payload);
+        SensorManager::print(payload, Server);
     });
 }
 
@@ -53,13 +55,14 @@ void serialHandler();
 void setup()
 {
     Serial.begin(115200);
+    Serial1.begin(115200, SERIAL_8N1, 19, 18);
 
     setupClient();
     sendMotorConf();
 
-    Serial.onReceive(serialHandler);
+    Server.onReceive(serialHandler);
 
-    Serial.println("Base Station Setup Complete");
+    Debug.println("Base Station Setup Complete");
 }
 
 void loop()
@@ -70,23 +73,47 @@ void loop()
     static double pi = 0.0;
     static long n = 0;
 
-    double term = (n % 2 == 0 ? 4.0 : -4.0) / (2 * n + 1);
-    pi += term;
+    pi += (n % 2 == 0 ? 4.0 : -4.0) / (2 * n + 1);
     n++;
 
-    delay(100);
+    delay(100); // no rush
 }
 
 void serialHandler()
 {
-    if (Serial.available() == 0)
+    if (Server.available() == 0)
         return;
         
-    char c = Serial.read();
-    int x = Serial.parseInt();
+    char command = Server.read();
+    int value = Server.parseInt();
 
-    while (Serial.available())
-        Serial.read();
+    while (Server.available())
+        Server.read();
 
-    Serial.printf("Command: %c, Value: %d\n", c, x);
+    Debug.printf("Received command '%c' with value %d\n", command, value);
+
+    switch (command)
+    {
+        case 'M': // move
+            sendMove(MoveType::LINEAR, 0.001f * value); // mm to m
+            break;
+        case 'R': // rotate
+            sendMove(MoveType::ROTATION, 0.001f * value); // mrad to rad
+            break;
+        case 'a': // acceleration
+            motorConfig.acceleration = static_cast<SettingsLevel>(value);
+            sendMotorConf();
+            break;
+        case 's': // speed
+            motorConfig.speed = static_cast<SettingsLevel>(value);
+            sendMotorConf();
+            break;
+        case 'c': // current
+            motorConfig.current = static_cast<SettingsLevel>(value);
+            sendMotorConf();
+            break;
+        case 'l': // lidar
+            // TODO: implement lidar control
+            break;
+    }
 }

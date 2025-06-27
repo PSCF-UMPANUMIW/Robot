@@ -18,8 +18,8 @@ public:
 
     static void sendPayload();
 
-    static void print();
-    static void print(PayloadSensors const& payload);
+    static void print(HardwareSerial& serial = Serial);
+    static void print(PayloadSensors const& payload, HardwareSerial& serial = Serial);
 
 private:
     SensorManager() = default;
