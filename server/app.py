@@ -3,7 +3,7 @@ from flask_cors import CORS
 import serial
 import threading
 
-SERIAL_PORT = 'COM11'
+SERIAL_PORT = 'COM3'
 SERIAL_BAUDRATE = 115200 
 
 app = Flask(__name__)

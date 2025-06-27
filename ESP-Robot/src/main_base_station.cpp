@@ -10,8 +10,8 @@
 
 #include <SensorManager.hpp>
 
-HardwareSerial& Server = Serial1;
-HardwareSerial& Debug = Serial;
+HardwareSerial& Server = Serial;
+HardwareSerial& Debug = Serial1;
 
 static PayloadMotorConfig motorConfig {
     .speed = SettingsLevel::LEVEL_LOW,
