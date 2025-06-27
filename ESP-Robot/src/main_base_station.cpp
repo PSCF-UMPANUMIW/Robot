@@ -6,6 +6,7 @@
 #include <Payloads/PayloadSensors.hpp>
 #include <Payloads/PayloadMotorConfig.hpp>
 #include <Payloads/PayloadMoveCommand.hpp>
+#include <Payloads/PayloadLidarConfig.hpp>
 
 #include <SensorManager.hpp>
 
@@ -40,6 +41,16 @@ void sendMotorConf()
     EspNowClient::sendMessage(motorConfig);
 }
 
+void sendLidarConf(LidarReader::MotorSpeed speed)
+{
+    PayloadLidarConfig conf {
+        .motorSpeed = speed,
+        .enableLaser = speed != LidarReader::MotorSpeed::OFF
+    };
+
+    EspNowClient::sendMessage(conf);
+}
+
 void setupClient()
 {
     EspNowClient::begin();
@@ -59,6 +70,7 @@ void setup()
 
     setupClient();
     sendMotorConf();
+    sendLidarConf(LidarReader::MotorSpeed::OFF);
 
     Server.onReceive(serialHandler);
 
@@ -71,7 +83,7 @@ void loop()
     // we will calculate PI in the spare time
 
     static double pi = 0.0;
-    static long n = 0;
+    static unsigned long n = 0;
 
     pi += (n % 2 == 0 ? 4.0 : -4.0) / (2 * n + 1);
     n++;
@@ -113,7 +125,10 @@ void serialHandler()
             sendMotorConf();
             break;
         case 'l': // lidar
-            // TODO: implement lidar control
+            sendLidarConf(static_cast<LidarReader::MotorSpeed>(value));
+            break;
+        default:
+            Debug.printf("Unknown command '%c'\n", command);
             break;
     }
 }

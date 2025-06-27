@@ -4,7 +4,7 @@
 
 // speed limit in m/s
 constexpr float SPEED_LOW    = 0.2f;
-constexpr float SPEED_MEDIUM = 0.2f;
+constexpr float SPEED_MEDIUM = 0.6f;
 constexpr float SPEED_HIGH   = 1.0f;
 
 // acceleration limit in m/s^2

@@ -7,6 +7,7 @@ struct PayloadLog;
 struct PayloadSensors;
 struct PayloadMoveCommand;
 struct PayloadMotorConfig;
+struct PayloadLidarConfig;
 
 
 template<typename PayloadType>
@@ -44,4 +45,10 @@ template<>
 struct PayloadTraits<PayloadMotorConfig>
 {
     static constexpr PacketID packetType = PacketID::MOTOR_CONFIG;
+};
+
+template<>
+struct PayloadTraits<PayloadLidarConfig>
+{
+    static constexpr PacketID packetType = PacketID::LIDAR_CONFIG;
 };

@@ -6,6 +6,7 @@
 #include <EspNowClient.hpp>
 #include <Payloads/PayloadMoveCommand.hpp>
 #include <Payloads/PayloadMotorConfig.hpp>
+#include <Payloads/PayloadLidarConfig.hpp>
 
 #include <LidarReader.hpp>
 #include <LidarMeasurementBuffer.hpp>
@@ -40,8 +41,8 @@ void setupLidar()
 
     lidarReader->begin();
     lidarReader->setDataReadyCallback(lidarCallback);
-    lidarReader->enableLaser();
-    lidarReader->setMotorSpeed(LidarReader::MotorSpeed::LOW_SPEED);
+    lidarReader->disableLaser();
+    lidarReader->setMotorSpeed(LidarReader::MotorSpeed::OFF);
 }
 
 void setupMotors()
@@ -99,7 +100,7 @@ void setupEspNow()
     client.registerPayloadHandler<PayloadMotorConfig>(
         [](PayloadMotorConfig const& payload)
         {
-            Serial.printf("Received motor config command: speed: %d\tacceleration:%d\tcurrent:%d\n",
+            Serial.printf("Received motor config command: speed:%d acceleration:%d current:%d\n",
                 payload.speed, payload.acceleration, payload.current);
 
             platform->setMaxSpeed(payload.speed);
@@ -110,6 +111,20 @@ void setupEspNow()
                 platform->enableSteppers();
             else
                 platform->disableSteppers();
+        }
+    );
+
+    client.registerPayloadHandler<PayloadLidarConfig>(
+        [](PayloadLidarConfig const& payload)
+        {
+            Serial.printf("Received lidar config command: motor speed: %d, laser enabled: %s\n",
+                static_cast<int>(payload.motorSpeed), payload.enableLaser ? "true" : "false");
+
+            lidarReader->setMotorSpeed(payload.motorSpeed);
+            if (payload.enableLaser)
+                lidarReader->enableLaser();
+            else
+                lidarReader->disableLaser();
         }
     );
 }

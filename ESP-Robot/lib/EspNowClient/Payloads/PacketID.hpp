@@ -10,4 +10,5 @@ enum class PacketID : uint8_t
     SENSORS,
     MOVE_COMMAND,
     MOTOR_CONFIG,
+    LIDAR_CONFIG,
 };

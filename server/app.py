@@ -126,7 +126,7 @@ def lidar():
         return jsonify({"error": "Missing command parameter"}), 400
     
     print(f"Received lidar speed command with level: {lidarSpeed}")
-    esp.write(f"L{lidarSpeed}\n".encode('utf-8'))
+    esp.write(f"l{lidarSpeed}\n".encode('utf-8'))
     
     return jsonify({"status": "success", "message": f"Lidar command with level {lidarSpeed} received"}), 200
 
