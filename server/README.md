@@ -1,6 +1,6 @@
 # Robot Server
 
-A simple Flask server that forms a bridge between the robot and the client application. It communicates with the client's application via a REST API, and with the robot via ESP-NOW through an ESP32 connected to the server by a serial port. See the hardware diagram in the [repository's root](../README.md) for more details.
+A Python Flask server that forms a bridge between the [robot](../ESP-Robot/README.md) and the [client application](../robot_app/README.md). It communicates with the client's application via a REST API, and with the robot via ESP-NOW through an ESP32 connected to the server by a serial port. See the hardware diagram in the [repository's root](../README.md) for more details.
 
 ## Setup
 
@@ -14,7 +14,7 @@ pip install -r requirements.txt
 python app.py
 ```
 
-The server will start on port 5000.
+The server will start on port 5000. You can change the port by modifying the `app.py` file, but keep in mind that the client application is configured to connect to port 5000 by default. If you change the port, you will need to update the client application configuration accordingly.
 
 ## Available Endpoints
 
@@ -180,3 +180,7 @@ Send movement command:
 ```
 curl -X POST http://localhost:5000/move -H "Content-Type: application/json" -d "{\\"type\\": \\"rotate\\", \\"value\\": 45}"
 ```
+
+---
+
+Go back to the main project [README](../README.md) for other details.

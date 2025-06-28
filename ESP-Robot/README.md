@@ -59,3 +59,7 @@ For the project, the following internal libraries were created:
 - **WheelPlatform** - manages stepper motors and provides a simple interface for moving the robot while abstracting away the kinematics of the platform.
 - **Sensors** - provides an interface for reading various sensors, such as the ultrasonic or IR distance, IMU, and magnetometer sensor, and allows for easy access to their data through the SensorManager class.
 - **EspNowClient** - sends and receives messages via ESP-NOW, wile automatically handling the serialization and deserialization of messages using C++'s template system.
+
+---
+
+Go back to the main project [README](../README.md) for other details.
