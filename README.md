@@ -50,14 +50,12 @@ The project is organized into several modules, each serving a specific purpose:
 
 For detailed documentation on each module, please refer to the respective README.md files in the `/ESP-Robot`, `/LIDAR-Vis`, `/server` and `/robot_app` directories.
 
----
+Additionally, the project includes the following resources:
+- [**images**](images/README.md)  
+  A collection of images showcasing the robot and its components.
 
-## Features
-
-- beep
-- boop
-
----
+- [**3D files**](3D_files/)  
+  CAD files for the robot's mechanical design in .f3z, .stp, .3mf and .stl formats.
 
 ## Technologies involved
 
@@ -66,9 +64,8 @@ The project uses the following technologies:
 - **C++** - for programming the ESP32 microcontrollers
 - [**PlatformIO**](https://github.com/platformio) - build system for the microcontrollers with the [Arduino](https://github.com/arduino) framework
 - **Flutter and Dart** - for creating the cross-platform GUI application,
-- **Python** - for lidar data visualization as well as hosting the "base station" server
+- **Python** - for lidar data visualization as well as hosting the base station server
 
----
 
 ## Authors
 
@@ -76,17 +73,35 @@ The project uses the following technologies:
 - [Karol Gryc](https://github.com/KarolGryc)
 - [Krzysztof Witek](https://github.com/krzsztfwtk)
 
----
 
 ## Results
 
-### Developed prototype
 
-![Robot photo 1](images/robot_photo.png)
+
+See all images at [here](images/README.md).
+
+### Demo video ([YouTube](https://www.youtube.com/watch?v=2aZc5tCkZr4))
+
+[![YouTube demo thumbnail](https://img.youtube.com/vi/2aZc5tCkZr4/maxresdefault.jpg)](https://www.youtube.com/watch?v=2aZc5tCkZr4)
+
+### Robot photos
+
+![Robot photos](images/robot_front.png)
+![Robot photos](images/robot_front_left.png)
+![Robot photos](images/robot_front_right.png)
+![Robot photos](images/robot_rear_right.png)
 
 ### Hardware diagram
 
 ![Hardware diagram](images/hardware_diagram.png)
+
+### CAD views
+
+![CAD views](images/cad_views.png)
+
+### CAD vs real robot
+
+![CAD vs real robot](images/cad_vs_real.png)
 
 ### Robot LIDAR showcase
 

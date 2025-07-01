@@ -31,7 +31,7 @@ class SensorData {
       pitch: (json['pitch'] ?? 0.0).toDouble(),
       roll: (json['roll'] ?? 0.0).toDouble(),
       heading: (json['heading'] ?? 0.0).toDouble(),
-      lidarSpeed: (json['lidar_speed'] ?? 0.0).toDouble(),
+      lidarSpeed: (json['lidar_speed'] / 10.0 ?? 0.0).toDouble(),
     );
   }
 }
