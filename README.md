@@ -83,10 +83,10 @@ See all images at [here](images/).
 
 ### Robot photos
 
-![Robot photos](images/robot_front.png)
-![Robot photos](images/robot_front_left.png)
-![Robot photos](images/robot_front_right.png)
-![Robot photos](images/robot_rear_right.png)
+![Robot photos](images/robot_front.jpg)
+![Robot photos](images/robot_front_left.jpg)
+![Robot photos](images/robot_front_right.jpg)
+![Robot photos](images/robot_rear_right.jpg)
 
 ### Hardware diagram
 
@@ -98,11 +98,11 @@ See all images at [here](images/).
 
 ### CAD vs real robot
 
-![CAD vs real robot](images/cad_vs_real.png)
+![CAD vs real robot](images/cad_vs_real.jpg)
 
 ### Robot LIDAR showcase
 
-![Robot LIDAR showcase](images/robot_lidar.png)
+![Robot LIDAR showcase](images/robot_lidar.jpg)
 
 ### App screenshots
 

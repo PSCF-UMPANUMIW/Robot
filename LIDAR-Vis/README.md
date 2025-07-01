@@ -31,7 +31,7 @@ This will open the GUI where you can configure the visualization settings and se
 
 ## Demo with robot
 
-![Demo with robot](../images/robot_lidar.png)
+![Demo with robot](../images/robot_lidar.jpg)
 
 ---
 
