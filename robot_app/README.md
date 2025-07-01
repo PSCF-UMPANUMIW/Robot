@@ -6,15 +6,16 @@ A cross-platform mobile and web application for controlling and monitoring a rob
 ## Features
 - **Live Robot Control:** Send commands to the robot for movement and configuration.
 
-    ![Robot App Control View](../images/control_screen.gif)
+    <img alt="Robot App Control View" src="../images/control_screen.gif" width="400" />
 
 - **Sensor Visualization:** View real-time data from robot sensors (proximity, ground, IMU, battery voltage, etc.).
 
-    ![Robot App Sensors View](../images/sensors_screen.gif) 
+    <img alt="Robot App Sensors View" src="../images/sensors_screen.gif" width="400" />
 
 - **Settings Management:** Configure robot parameters such as speed, acceleration, and LiDAR config from the app.
 
-    ![Robot App Settings View](../images/settings_screen.gif)
+    <img alt="Robot App Settings View" src="../images/settings_screen.gif" width="400" />
+
 
 - **Multi-Platform Support:** Runs on Android, iOS, Windows, and Web.
 
