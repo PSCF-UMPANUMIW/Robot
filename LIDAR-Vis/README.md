@@ -35,4 +35,4 @@ This will open the GUI where you can configure the visualization settings and se
 
 ---
 
-Go back to the main project [README](../README.md) for other details.
+Go back to the main project [README](../) for other details.

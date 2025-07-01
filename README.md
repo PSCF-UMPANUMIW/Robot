@@ -33,22 +33,22 @@ The focus of this project is to design and build a modular AGV (Automated Guided
 
 The project is organized into several modules, each serving a specific purpose:
 
-- [**ESP-Robot**](ESP-Robot/README.md)  
+- [**ESP-Robot**](ESP-Robot/)  
   PlatformIO project for the ESP32 robot and base station controller.
 
-- [**LIDAR-Vis**](LIDAR-Vis/README.md)  
+- [**LIDAR-Vis**](LIDAR-Vis/)  
   Python-based visualization tool for rendering LiDAR scan data in real time.
 
-- [**server**](server/README.md)  
+- [**server**](server/)  
   A lightweight server for the local API.
 
-- [**robot_app**](robot_app/README.md)  
+- [**robot_app**](robot_app/)  
   Cross-platform application for the client device.
 
 For detailed documentation on each module, please refer to the respective README.md files in the `/ESP-Robot`, `/LIDAR-Vis`, `/server` and `/robot_app` directories.
 
 Additionally, the project includes the following resources:
-- [**images**](images/README.md)  
+- [**images**](images/)  
   A collection of images showcasing the robot and its components.
 
 - [**3D files**](3D_files/)  
@@ -75,7 +75,7 @@ The project uses the following technologies:
 
 
 
-See all images at [here](images/README.md).
+See all images at [here](images/).
 
 ### Demo video ([YouTube](https://www.youtube.com/watch?v=2aZc5tCkZr4))
 

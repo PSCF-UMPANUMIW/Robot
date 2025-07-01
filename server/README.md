@@ -1,6 +1,6 @@
 # Robot Server
 
-A Python Flask server that forms a bridge between the [robot](../ESP-Robot/README.md) and the [client application](../robot_app/README.md). It communicates with the client's application via a REST API, and with the robot via ESP-NOW through an ESP32 connected to the server by a serial port. See the hardware diagram in the [repository's root](../README.md) for more details.
+A Python Flask server that forms a bridge between the [robot](../ESP-Robot/) and the [client application](../robot_app/). It communicates with the client's application via a REST API, and with the robot via ESP-NOW through an ESP32 connected to the server by a serial port. See the hardware diagram in the [repository's root](../) for more details.
 
 ## Setup
 
@@ -150,7 +150,7 @@ The server will start on port 5000. You can change the port by modifying the `ap
 
 - **Description:** Sets the LIDAR speed level. Allowed values are 0 (off), 1 (slow), 2 (fast) and 3 (max).
 > [!WARNING]
-> The lidar is incabaple of measurement in the "max" mode.
+> The lidar is incapable of measurement in the "max" mode.
 - **Request Body:**  
   ```json
   {
@@ -183,4 +183,4 @@ curl -X POST http://localhost:5000/move -H "Content-Type: application/json" -d "
 
 ---
 
-Go back to the main project [README](../README.md) for other details.
+Go back to the main project [README](../) for other details.

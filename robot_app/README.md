@@ -16,7 +16,7 @@ A cross-platform mobile and web application for controlling and monitoring a rob
 
 ## Server
 
-Requires a running server to communicate with the robot. The server is implemented in Python using Flask and ESP-NOW for communication with the robot hardware. For more details, see the [Robot Server README](../server/README.md).
+Requires a running server to communicate with the robot. The server is implemented in Python using Flask and ESP-NOW for communication with the robot hardware. For more details, see the [Robot Server README](../server/).
 
 ## Screenshots
 
@@ -25,4 +25,4 @@ Requires a running server to communicate with the robot. The server is implement
 ---
 
 
-Go back to the main project [README](../README.md) for other details.
+Go back to the main project [README](../) for other details.

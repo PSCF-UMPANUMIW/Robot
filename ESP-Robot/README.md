@@ -62,4 +62,4 @@ For the project, the following internal libraries were created:
 
 ---
 
-Go back to the main project [README](../README.md) for other details.
+Go back to the main project [README](../) for other details.

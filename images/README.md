@@ -22,3 +22,7 @@
 ## App screenshots
 
 ![App screenshots](app_combined.png)
+
+---
+
+Go back to the main project [README](../) for other details.
