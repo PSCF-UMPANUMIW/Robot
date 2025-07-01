@@ -81,9 +81,13 @@ See all images at [here](images/).
 
 [![YouTube demo thumbnail](https://img.youtube.com/vi/2aZc5tCkZr4/maxresdefault.jpg)](https://www.youtube.com/watch?v=2aZc5tCkZr4)
 
-### Rotating robot 
+### 360° View of the Robot
 
 ![Rotating AGV](images/agv_rotation.webp)
+
+### Robot movement
+
+![Robot movement](images/robot_movement.webp)
 
 ### Hardware diagram
 
