@@ -1,6 +1,3 @@
-> [!CAUTION]
-> This README is still work in progress
-
 # Universal Robotic Platform
 
 ## Description
