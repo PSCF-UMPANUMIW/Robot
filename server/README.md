@@ -16,6 +16,10 @@ python app.py
 
 The server will start on port 5000. You can change the port by modifying the `app.py` file, but keep in mind that the client application is configured to connect to port 5000 by default. If you change the port, you will need to update the client application configuration accordingly.
 
+## Testing the API
+
+For an interactive API test suite, we provice a [FRequest](https://github.com/request/request) profile [here](./robot.frp).
+
 ## Available Endpoints
 
 ### GET /health

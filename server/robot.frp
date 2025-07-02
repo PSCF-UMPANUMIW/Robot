@@ -1,0 +1,74 @@
+﻿<?xml version="1.0"?>
+<FRequestProject frequestVersion="1.2" name="Robot mock server" mainUrl="http://localhost:5000" uuid="{6fc125b7-2607-4fe0-80af-5653cd024ff4}" saveIdentCharacter="0">
+    <Request name="sensors" uuid="{02009968-b846-4c30-8e12-a131de006d7f}" order="0" bOverridesMainUrl="false" overrideMainUrl="" path="sensors" type="0" bDownloadResponseAsFile="false" bDisableGlobalHeaders="true">
+        <Body type="0"><![CDATA[]]></Body>
+        <Headers />
+    </Request>
+    <Request name="move" uuid="{b1f1b361-1151-4b1d-922b-b3c4eaf0fb1d}" order="1" bOverridesMainUrl="false" overrideMainUrl="" path="move" type="1" bDownloadResponseAsFile="false" bDisableGlobalHeaders="true">
+        <Body type="0"><![CDATA[{
+	"distance":200
+}]]></Body>
+        <Headers>
+            <Header>
+                <Key><![CDATA[Content-type]]></Key>
+                <Value><![CDATA[application/json]]></Value>
+            </Header>
+        </Headers>
+    </Request>
+    <Request name="turn" uuid="{78bfd566-ce28-4be7-8771-6acdd3bf5c14}" order="2" bOverridesMainUrl="false" overrideMainUrl="" path="turn" type="1" bDownloadResponseAsFile="false" bDisableGlobalHeaders="true">
+        <Body type="0"><![CDATA[{
+	"angle":1800
+}]]></Body>
+        <Headers>
+            <Header>
+                <Key><![CDATA[Content-type]]></Key>
+                <Value><![CDATA[application/json]]></Value>
+            </Header>
+        </Headers>
+    </Request>
+    <Request name="acceleration" uuid="{02f31011-d245-46bb-a802-96b9b8471312}" order="3" bOverridesMainUrl="false" overrideMainUrl="" path="acceleration" type="1" bDownloadResponseAsFile="false" bDisableGlobalHeaders="true">
+        <Body type="0"><![CDATA[{
+	"level":1
+}]]></Body>
+        <Headers>
+            <Header>
+                <Key><![CDATA[Content-type]]></Key>
+                <Value><![CDATA[application/json]]></Value>
+            </Header>
+        </Headers>
+    </Request>
+    <Request name="speed" uuid="{d9a7f422-e959-4ef1-8757-c7f9a4f623ac}" order="4" bOverridesMainUrl="false" overrideMainUrl="" path="speed" type="1" bDownloadResponseAsFile="false" bDisableGlobalHeaders="true">
+        <Body type="0"><![CDATA[{
+	"level":0
+}]]></Body>
+        <Headers>
+            <Header>
+                <Key><![CDATA[Content-type]]></Key>
+                <Value><![CDATA[application/json]]></Value>
+            </Header>
+        </Headers>
+    </Request>
+    <Request name="current" uuid="{04bdbb97-5b7e-4e3b-99d9-89be83c39d08}" order="5" bOverridesMainUrl="false" overrideMainUrl="" path="current" type="1" bDownloadResponseAsFile="false" bDisableGlobalHeaders="true">
+        <Body type="0"><![CDATA[{
+	"level":2
+}]]></Body>
+        <Headers>
+            <Header>
+                <Key><![CDATA[Content-type]]></Key>
+                <Value><![CDATA[application/json]]></Value>
+            </Header>
+        </Headers>
+    </Request>
+    <Request name="lidar" uuid="{41262373-0de8-4c1b-af5c-5f338b01a67e}" order="6" bOverridesMainUrl="false" overrideMainUrl="" path="lidar" type="1" bDownloadResponseAsFile="false" bDisableGlobalHeaders="true">
+        <Body type="0"><![CDATA[{
+	"speed":3
+}]]></Body>
+        <Headers>
+            <Header>
+                <Key><![CDATA[Content-type]]></Key>
+                <Value><![CDATA[application/json]]></Value>
+            </Header>
+        </Headers>
+    </Request>
+    <GlobalHeaders />
+</FRequestProject>
