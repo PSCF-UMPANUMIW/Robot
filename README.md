@@ -81,12 +81,13 @@ See all images at [here](images/).
 
 [![YouTube demo thumbnail](https://img.youtube.com/vi/2aZc5tCkZr4/maxresdefault.jpg)](https://www.youtube.com/watch?v=2aZc5tCkZr4)
 
-### Robot photos
+### 360° View of the Robot
 
-![Robot photos](images/robot_front.jpg)
-![Robot photos](images/robot_front_left.jpg)
-![Robot photos](images/robot_front_right.jpg)
-![Robot photos](images/robot_rear_right.jpg)
+![Rotating AGV](images/agv_rotation.webp)
+
+### Robot movement
+
+![Robot movement](images/robot_movement.webp)
 
 ### Hardware diagram
 
@@ -104,7 +105,11 @@ See all images at [here](images/).
 
 ![Robot LIDAR showcase](images/robot_lidar.jpg)
 
-### App screenshots
+### LIDAR at different speeds
+
+![Robot LIDAR speeds](images/lidar_speeds.webp)
+
+### App views
 
 ![App screenshots](images/app_combined.png)
 
